@@ -4,6 +4,8 @@
 
 El contenido debe poder cambiarse sin editar componentes.
 
+Los componentes consumen datos tipados/validados desde `src/content/`; no contienen biografía, frases, fechas, URLs o mensajes personales hardcodeados.
+
 ## 2. Profile
 
 ```ts
@@ -80,21 +82,20 @@ type TeamMember = {
 
 ## 7. Memory
 
+La implementación debe usar una unión discriminada por `type` para impedir estados imposibles.
+
+Referencia conceptual:
+
 ```ts
-type Memory = {
-  id: string;
-  type: "photo" | "note" | "screenshot" | "text" | "sticker";
-  src?: string;
-  text?: string;
-  date?: string;
-  alt?: string;
-  rotation?: number;
-};
+type Memory =
+  | { id: string; type: "photo"; src: string; alt: string; date?: string; rotation?: number }
+  | { id: string; type: "screenshot"; src: string; alt: string; date?: string; rotation?: number }
+  | { id: string; type: "note"; text: string; date?: string; rotation?: number }
+  | { id: string; type: "text"; text: string; date?: string; rotation?: number }
+  | { id: string; type: "sticker"; src: string; alt?: string; rotation?: number };
 ```
 
-`rotation` solo decorativo.
-
-La lectura nunca debe depender de una transformación extrema.
+`rotation` es sólo decorativo. La lectura nunca depende de una transformación extrema.
 
 ## 8. Quiz
 
@@ -148,17 +149,81 @@ type Finale = {
 };
 ```
 
-## 12. Content checklist
+## 12. Ciclo de contenido preview-first
 
-Antes de desarrollo visual completo, reunir:
+No es necesario reunir todo el contenido real antes de desarrollar la experiencia.
+
+### Etapa A — Fixtures de M0/M1
+
+Crear fixtures mínimos, válidos y claramente demo/provisionales para poder construir schemas, layout y vertical slice.
+
+Los fixtures **no deben inventar biografía real**.
+
+### Etapa B — Preview
+
+La primera preview puede combinar:
+
+- datos confirmados;
+- contenido provisional marcado internamente;
+- placeholders intencionales.
+
+La preview existe para descubrir qué falta, no para aparentar que todo está terminado.
+
+### Etapa C — Feedback y recolección dirigida
+
+Después de mostrar la preview, preguntar a grupos concretos únicamente por el material que mejora secciones reales:
+
+- compañeros de Medicina → timeline, materias, hospitales, hábitos, frases y fotos académicas;
+- familia → origen de la vocación, infancia/adolescencia, orgullo y mensaje final;
+- pareja → hábitos/frases, fotos significativas, música y mensaje reservado;
+- scouts → personalidad, historias antiguas, fotos y chistes internos;
+- secundaria → transición adolescente → CBC/Medicina;
+- Esnaola/música → faceta creativa, música, fotos y recuerdos fuera de Medicina.
+
+### Etapa D — Contenido real progresivo
+
+Reemplazar fixtures por contenido real sin esperar a tener el 100% del material.
+
+### Etapa E — Freeze
+
+Antes de producción:
+
+- eliminar placeholders;
+- resolver o descartar todo lo provisional;
+- corregir hechos/datos dudosos;
+- validar schemas completos;
+- revisar assets rotos.
+
+## 13. Estado editorial
+
+Durante la producción puede mantenerse, fuera de la UI final, un inventario simple:
+
+```text
+confirmado
+provisional
+pendiente
+```
+
+Este estado puede vivir en documentación/checklists y **no necesita formar parte del schema público de runtime**.
+
+Reglas:
+
+- `confirmado`: puede entrar a producción.
+- `provisional`: puede aparecer en preview sólo si queda claro internamente que debe revisarse.
+- `pendiente`: usar placeholder o directamente omitir la sección/dato.
+
+Nunca mostrar “PREGUNTA A CORROBORAR” al usuario final.
+
+## 14. Objetivo de contenido para versión completa
+
+No es requisito para la primera preview. Sí es una referencia para M5–M7:
 
 - [ ] nombre visible
-- [ ] año de inicio
-- [ ] fecha/año de finalización
+- [ ] año de inicio y egreso
 - [ ] retrato principal
 - [ ] 8–15 momentos timeline
-- [ ] 15–30 fotografías
-- [ ] 5–10 personas de equipo tratante
+- [ ] 15–30 fotografías útiles
+- [ ] 5–10 personas/grupos representativos en equipo tratante
 - [ ] 8–20 recuerdos scrapbook
 - [ ] 4–8 estadísticas
 - [ ] 3–5 preguntas trivia
@@ -167,9 +232,9 @@ Antes de desarrollo visual completo, reunir:
 - [ ] música opcional
 - [ ] audios opcionales
 
-## 13. Curación
+Estos números son orientativos. La calidad narrativa tiene prioridad sobre llenar cuotas.
 
-No subir todo.
+## 15. Curación
 
 ### Fotos
 
@@ -181,45 +246,32 @@ Elegir:
 - calidad suficiente;
 - fotografías que cuenten algo.
 
+Preferir 15 fotos con historia a 50 casi iguales.
+
 ### Timeline
 
 Preferible 10 hitos excelentes que 40 irrelevantes.
 
 ### Mensajes
 
-Máximo recomendado por tarjeta:
+Máximo recomendado por tarjeta/modal: 50–80 palabras, salvo el contenido reservado para el cierre.
 
-50–80 palabras.
+### Audios
 
-## 14. Privacidad
+Referencia: 15–30 segundos. Deben sonar naturales, no como discursos formales.
 
-Clasificar cada asset:
+## 16. Publicación de fotos y capturas
 
-- `public`;
-- `friends-only`;
-- `private`.
+La versión final es pública e indexable y las fotos aportadas al proyecto se consideran aptas para publicación según la decisión del PO.
 
-Aunque técnicamente todos estén en la misma build, esta clasificación obliga a revisar qué se publicará.
+Aun así, antes del freeze revisar capturas/fotos para evitar mostrar por accidente:
 
-## 15. Metadatos sensibles
+- números de teléfono;
+- información de pacientes;
+- datos de terceros no relacionados;
+- contenido claramente ajeno al homenaje.
 
-Eliminar EXIF de fotografías antes del deploy cuando contenga:
-
-- ubicación;
-- dispositivo;
-- datos innecesarios.
-
-## 16. Screenshots
-
-Revisar capturas de WhatsApp.
-
-Ocultar:
-
-- teléfonos;
-- nombres de terceros;
-- información médica;
-- información laboral sensible;
-- datos personales no pertinentes.
+No bloquear la recolección por una política de privacidad más estricta que la decisión de producto vigente.
 
 ## 17. Naming de assets
 
@@ -231,7 +283,7 @@ memory-chat-final.webp
 audio-amiga-lucia.m4a
 ```
 
-No usar:
+Evitar nombres crudos como:
 
 ```text
 IMG_20260824_143721.jpg
@@ -244,8 +296,24 @@ Describir la fotografía, no el archivo.
 
 Bien:
 
-> Ana y tres amigas con guardapolvo frente al Hospital de Clínicas.
+> Valentina y tres amigas con guardapolvo frente a la Facultad.
 
 Mal:
 
 > Foto 7.
+
+## 19. Regla de corroboración
+
+No todas las preguntas pendientes merecen investigación.
+
+Corroborar primero lo que cambia la narrativa:
+
+1. por qué/cuándo eligió Medicina;
+2. hitos realmente memorables de la carrera;
+3. frases/latiguillos auténticos;
+4. hábitos de estudio propios;
+5. fotos académicas clave;
+6. música o símbolos relevantes;
+7. mensaje final.
+
+Los detalles que no mejoran una sección concreta pueden quedar fuera del proyecto.
