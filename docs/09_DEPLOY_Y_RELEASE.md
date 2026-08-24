@@ -1,6 +1,24 @@
 # 09 — Deploy y release
 
-## 1. Ambientes
+## 1. Hosting canónico
+
+El proyecto se desplegará en **Vercel**.
+
+Arquitectura de deploy:
+
+```text
+GitHub
+  ↓
+Vercel Preview Deployments
+  ↓
+validación / feedback
+  ↓
+Vercel Production
+  ↓
+QR final
+```
+
+## 2. Ambientes
 
 ### Local
 
@@ -8,140 +26,184 @@ Desarrollo.
 
 ### Preview
 
-Cada PR.
+Dos usos:
+
+1. preview automática de PRs;
+2. **preview de producto de M1 (#27)** para mostrar la experiencia a colaboradores y recolectar contenido dirigido.
+
+La preview:
+
+- puede usar fixtures/placeholders;
+- no es la URL del QR final;
+- no es canonical de producción;
+- no necesita estar completa para ser útil.
 
 ### Production
 
-URL del QR.
+URL pública, estable e indexable a la que apunta el QR del festejo.
 
-## 2. Hosting
+## 3. Estrategia de preview M1
 
-Recomendado:
+Después del vertical slice (#7):
 
-**Vercel**
+1. desplegar en Vercel;
+2. validar 360/390/430 px;
+3. compartir con un grupo reducido;
+4. mostrar la experiencia, no sólo screenshots;
+5. preguntar por huecos concretos;
+6. registrar feedback;
+7. lanzar recolección dirigida por grupo;
+8. continuar M2–M5 mientras llega contenido.
 
-## 3. Dominio
+No esperar a tener todas las fotos/mensajes/audios para crear la preview.
 
-Opciones:
+## 4. URL y dominio
 
-- subdominio personal;
-- dominio corto nuevo;
-- `dra-nombre.*`;
-- nombre creativo del proyecto.
+La URL final debe ser estable y razonablemente corta.
 
-Evitar URLs largas porque terminan impresas o compartidas.
+Puede usarse:
 
-## 4. Privacidad
+- dominio propio;
+- subdominio;
+- dominio de Vercel si se decide mantenerlo.
 
-Por defecto:
+La decisión exacta puede cerrarse más cerca del release.
 
-```text
-noindex
-nofollow opcional
-```
+## 5. Indexación
 
-Si el contenido es personal, no depender únicamente de “nadie conoce el link”.
+Decisión vigente:
 
-Para mayor privacidad se puede agregar protección posterior.
+**Producción será indexable por buscadores.**
 
-## 5. QR
+Requisitos:
 
-El QR físico debe apuntar a una URL estable.
+- `robots.txt` permite indexación de producción;
+- no usar `noindex` en producción;
+- canonical apunta a la URL final;
+- title/description/OG correctos;
+- previews no se presentan como canonical.
+
+Si Vercel o la configuración elegida protege automáticamente previews de indexación, mantener ese comportamiento; no es necesario que las previews sean descubribles por buscadores.
+
+## 6. QR
+
+El QR físico debe apuntar a la URL estable de producción.
 
 No apuntar directamente a:
 
-- preview;
+- Vercel Preview Deployment;
 - branch URL;
-- build hash.
+- build hash;
+- URL temporal.
 
-Ideal:
-
-```text
-https://dominio.com/
-```
-
-## 6. QR impreso
+## 7. QR impreso
 
 Validar:
 
-- 3 tamaños;
+- varios tamaños razonables;
 - papel real;
 - poca luz;
 - Android;
-- iOS;
+- iOS cuando sea posible;
 - cámara nativa.
 
-Incluir texto fallback corto debajo.
+Incluir texto/URL fallback si el diseño físico lo permite.
 
-## 7. Freeze
+El concepto actual del objeto físico es una pieza con estética de **receta/alta médica** que integra el QR.
 
-48–72 horas antes del festejo:
+## 8. Freeze
 
-- congelar features;
-- solo correcciones;
-- reemplazar contenido;
-- ejecutar auditoría.
+Antes del festejo:
 
-## 8. Backup
+- congelar nuevas features;
+- resolver feedback importante de #27;
+- reemplazar/eliminar fixtures;
+- revisar contenido provisional;
+- comprobar fotos/mensajes/audios;
+- ejecutar auditoría final;
+- sólo aceptar fixes después del freeze.
+
+## 9. Backup
 
 Mantener:
 
 - tag Git;
 - commit SHA;
-- export de contenido;
+- contenido final;
 - assets finales;
-- QR final.
+- QR final;
+- URL de producción.
 
-## 9. Release tags
+## 10. Release tags
 
-Ejemplo:
+Referencia:
 
 ```text
 v0.1.0-prototype
+v0.2.0-preview
 v0.5.0-content-complete
 v0.9.0-rc1
 v1.0.0-celebration
 ```
 
-## 10. Checklist producción
+## 11. Checklist producción
 
-- [ ] dominio final
+- [ ] URL/dominio final
 - [ ] HTTPS
-- [ ] noindex
+- [ ] producción indexable
+- [ ] canonical correcto
+- [ ] robots correcto
+- [ ] title/description
 - [ ] favicon
-- [ ] OG
+- [ ] OG/social preview
 - [ ] responsive
-- [ ] audios
+- [ ] audios/videos
 - [ ] imágenes
 - [ ] mobile devices
-- [ ] QR
-- [ ] analytics desactivado o revisado
 - [ ] errores de consola
 - [ ] enlaces
 - [ ] content freeze
-- [ ] `v1.0.0`
+- [ ] QR
+- [ ] release tag
+- [ ] rollback/redeploy documentado
 
-## 11. Después del festejo
+## 12. Release y QR
 
-No hace falta apagar la web.
+Orden recomendado:
 
-Puede transformarse en un **modo archivo**:
+```text
+#26 content freeze
+→ RC final
+→ #21/#22/#23/#24 verdes
+→ production deploy
+→ confirmar URL/canonical/indexación
+→ generar QR final
+→ probar QR físico
+→ tag v1.0.0-celebration
+```
+
+No imprimir el QR definitivo antes de estabilizar la URL de producción.
+
+## 13. Después del festejo
+
+La web debe seguir existiendo.
+
+Evoluciones ya previstas:
+
+- fotos del propio festejo;
+- Jura;
+- posibles recuerdos adicionales descubiertos después.
+
+No es necesario convertir el proyecto en una plataforma permanente ni agregar backend para estas actualizaciones: pueden seguir siendo contenido estático versionado.
+
+## 14. Modo archivo futuro
+
+Si la intro deja de tener sentido meses después, puede evaluarse un modo archivo:
 
 - intro más corta;
 - acceso directo a recuerdos;
 - mantener timeline;
 - mantener mensajes;
-- retirar elementos temporales.
+- mantener finale como registro del momento.
 
-## 12. Evolución opcional
-
-Una futura versión puede agregar:
-
-- cápsula de tiempo;
-- mensajes posteriores;
-- fotos del propio festejo;
-- recuerdos de la Jura;
-- primera residencia;
-- primer año como médica.
-
-Esto debería hacerse como nueva etapa narrativa y no inflar el MVP original.
+Ese cambio debe hacerse después del evento y en una issue independiente.
