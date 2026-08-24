@@ -70,19 +70,19 @@ No hace falta completar una entrevista exhaustiva ni reunir todos los assets ant
 
 ## Documentación
 
-| Documento | Contenido |
-|---|---|
-| [00_PROPÓSITO_Y_PRINCIPIOS](docs/00_PROPOSITO_Y_PRINCIPIOS.md) | Propósito y principios de producto |
-| [01_VISIÓN_Y_EXPERIENCIA](docs/01_VISION_Y_EXPERIENCIA.md) | Narrativa y recorrido completo |
-| [02_ARQUITECTURA_TÉCNICA](docs/02_ARQUITECTURA_TECNICA.md) | Stack, capas y decisiones técnicas |
-| [03_ESPECIFICACIÓN_FUNCIONAL](docs/03_ESPECIFICACION_FUNCIONAL.md) | Requisitos funcionales/no funcionales |
-| [04_DISEÑO_MOBILE_FIRST](docs/04_DISENO_MOBILE_FIRST.md) | UX, responsive e interacción |
-| [05_MODELO_DE_DATOS_Y_CONTENIDO](docs/05_MODELO_DE_DATOS_Y_CONTENIDO.md) | Schemas, content layer y ciclo del contenido |
-| [06_ROADMAP](docs/06_ROADMAP.md) | Fases, gates y orden de construcción |
-| [07_ISSUES_Y_CRITERIOS](docs/07_ISSUES_Y_CRITERIOS.md) | Mapa del backlog real de GitHub |
-| [08_CALIDAD_ACCESIBILIDAD_PERFORMANCE](docs/08_CALIDAD_ACCESIBILIDAD_PERFORMANCE.md) | Gates de calidad |
-| [09_DEPLOY_Y_RELEASE](docs/09_DEPLOY_Y_RELEASE.md) | Preview, producción, QR y release |
-| [10_PREVIEW_Y_RECOLECCION_CONTENIDO](docs/10_PREVIEW_Y_RECOLECCION_CONTENIDO.md) | Protocolo de feedback y recolección dirigida |
+| Documento                                                                            | Contenido                                    |
+| ------------------------------------------------------------------------------------ | -------------------------------------------- |
+| [00_PROPÓSITO_Y_PRINCIPIOS](docs/00_PROPOSITO_Y_PRINCIPIOS.md)                       | Propósito y principios de producto           |
+| [01_VISIÓN_Y_EXPERIENCIA](docs/01_VISION_Y_EXPERIENCIA.md)                           | Narrativa y recorrido completo               |
+| [02_ARQUITECTURA_TÉCNICA](docs/02_ARQUITECTURA_TECNICA.md)                           | Stack, capas y decisiones técnicas           |
+| [03_ESPECIFICACIÓN_FUNCIONAL](docs/03_ESPECIFICACION_FUNCIONAL.md)                   | Requisitos funcionales/no funcionales        |
+| [04_DISEÑO_MOBILE_FIRST](docs/04_DISENO_MOBILE_FIRST.md)                             | UX, responsive e interacción                 |
+| [05_MODELO_DE_DATOS_Y_CONTENIDO](docs/05_MODELO_DE_DATOS_Y_CONTENIDO.md)             | Schemas, content layer y ciclo del contenido |
+| [06_ROADMAP](docs/06_ROADMAP.md)                                                     | Fases, gates y orden de construcción         |
+| [07_ISSUES_Y_CRITERIOS](docs/07_ISSUES_Y_CRITERIOS.md)                               | Mapa del backlog real de GitHub              |
+| [08_CALIDAD_ACCESIBILIDAD_PERFORMANCE](docs/08_CALIDAD_ACCESIBILIDAD_PERFORMANCE.md) | Gates de calidad                             |
+| [09_DEPLOY_Y_RELEASE](docs/09_DEPLOY_Y_RELEASE.md)                                   | Preview, producción, QR y release            |
+| [10_PREVIEW_Y_RECOLECCION_CONTENIDO](docs/10_PREVIEW_Y_RECOLECCION_CONTENIDO.md)     | Protocolo de feedback y recolección dirigida |
 
 ## Alcance inicial
 
@@ -116,6 +116,49 @@ No hace falta completar una entrevista exhaustiva ni reunir todos los assets ant
 - APIs médicas.
 - Datos clínicos reales.
 - Funciones que pretendan simular atención médica real.
+
+## Desarrollo y Quality Gates
+
+### Requisitos
+
+- Node.js >= 24
+- npm >= 11
+
+### Instalación
+
+```bash
+npm ci
+```
+
+### Comandos disponibles
+
+```bash
+# Desarrollo local (puerto 5173)
+npm run dev
+
+# Compilación de producción
+npm run build
+
+# Preview del build local
+npm run preview
+
+# Linter (ESLint con 0 warnings)
+npm run lint
+
+# Formato de código (Prettier)
+npm run format
+npm run format:check
+
+# Verificación de tipos TypeScript
+npm run typecheck
+
+# Tests unitarios e integración (Vitest + Testing Library)
+npm test
+npm run test:watch
+
+# Tests End-to-End (Playwright mobile y desktop)
+npm run test:e2e
+```
 
 ## Estado actual
 
