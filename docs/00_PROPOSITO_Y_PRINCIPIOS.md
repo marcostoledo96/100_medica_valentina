@@ -2,7 +2,7 @@
 
 ## 1. Propósito
 
-Crear una experiencia web privada o semiprivada que celebre el final de la carrera de Medicina de una persona concreta.
+Crear una experiencia web pública, indexable y personal que celebre la graduación de Valentina en Medicina (UBA).
 
 La web debe funcionar como:
 
@@ -10,7 +10,8 @@ La web debe funcionar como:
 - recuerdo;
 - experiencia interactiva;
 - archivo de momentos de la carrera;
-- elemento central del festejo físico mediante QR.
+- elemento central del festejo físico mediante QR;
+- sitio que pueda seguir existiendo y evolucionando después del festejo.
 
 No se busca construir una aplicación sanitaria.
 
@@ -32,18 +33,14 @@ La carrera es reinterpretada como una internación prolongada:
 
 ## 3. Transformación narrativa
 
-La evolución visual debe acompañar la evolución emocional.
-
 ### Inicio
 
 - frío;
 - preciso;
-- oscuro o clínico;
+- clínico;
 - tipografía funcional;
 - lenguaje de sistema;
-- datos;
-- estados;
-- barras de progreso.
+- datos y estados.
 
 ### Desarrollo
 
@@ -54,16 +51,14 @@ Empiezan a aparecer:
 - nombres;
 - audios;
 - humor;
-- pequeñas imperfecciones;
-- elementos manuscritos.
+- elementos manuscritos;
+- composición más orgánica.
 
 ### Final
 
 La metáfora médica desaparece.
 
-La última pantalla debe ser humana y sencilla.
-
-No tiene que sentirse como una “pantalla de software”.
+La última pantalla debe ser humana, emotiva y sencilla. No tiene que sentirse como una “pantalla de software”.
 
 ## 4. Principios de producto
 
@@ -73,15 +68,11 @@ Una foto real con una historia concreta vale más que una animación compleja si
 
 ### P02 — Mobile-first real
 
-El diseño de 360–430 px es el diseño principal.
-
-Desktop es una adaptación posterior.
+El diseño de 360–430 px es el diseño principal. Desktop es una adaptación posterior.
 
 ### P03 — Una sola historia
 
-No diseñar una colección de widgets.
-
-Cada sección debe responder:
+No diseñar una colección de widgets. Cada sección debe responder:
 
 > ¿Por qué esta pantalla existe dentro del relato?
 
@@ -93,20 +84,19 @@ Evitar bromas sobre:
 
 - salud real;
 - diagnósticos verdaderos;
-- cuerpo;
-- salud mental;
-- desempeño profesional futuro;
-- pacientes.
+- pacientes;
+- notas/recursadas si no están explícitamente aprobadas;
+- hechos que no ocurrieron sólo porque funcionan como chiste.
 
 ### P05 — No fingir ser un sistema real
 
-Debe quedar claro que es una experiencia de celebración.
+Debe quedar claro que es una experiencia de celebración. No utilizar marcas oficiales de hospitales ni copiar interfaces clínicas 1:1.
 
-No utilizar marcas oficiales de hospitales ni copiar interfaces clínicas 1:1.
+### P06 — Publicación consciente
 
-### P06 — Privacidad por defecto
+La versión final será pública e indexable. El contenido debe revisarse antes del release para evitar datos ajenos innecesarios o información de pacientes/terceros que no corresponda publicar.
 
-No publicar información que la protagonista no aceptaría ver indexada.
+Las fotos aportadas para el proyecto pueden formar parte de producción; el foco de la revisión no es esconder el regalo sino garantizar que lo visible sea deliberado.
 
 ### P07 — Contenido desacoplado
 
@@ -118,7 +108,7 @@ La historia debe seguir siendo comprensible si:
 
 - no carga audio;
 - se reduce movimiento;
-- no funciona una animación;
+- falla una animación;
 - se abre desde un teléfono lento.
 
 ### P09 — Sin backend salvo necesidad concreta
@@ -127,9 +117,28 @@ El MVP debe poder existir como sitio estático.
 
 ### P10 — El final manda
 
-Toda la experiencia debe construir hacia el momento:
+Toda la experiencia debe construir hacia:
 
 **MÉDICA → ALTA DEFINITIVA**
+
+### P11 — Preview antes que investigación exhaustiva
+
+No bloquear el desarrollo esperando toda la biografía, fotos, mensajes o audios.
+
+Primero se construye un vertical slice con contenido confirmado y fixtures controlados. Después se publica una preview y se usa esa experiencia visible para pedir información concreta a quienes mejor conocen cada etapa.
+
+Flujo:
+
+```text
+vertical slice
+→ preview
+→ feedback
+→ recolección dirigida
+→ contenido real progresivo
+→ freeze
+```
+
+Ningún dato dudoso debe presentarse como hecho definitivo sólo para completar visualmente la preview.
 
 ## 5. No objetivos
 
@@ -140,8 +149,8 @@ Este proyecto no intenta:
 - reemplazar una historia clínica;
 - crear un portfolio profesional;
 - ser una plantilla comercial;
-- ser reutilizable para cualquier graduado antes de ser excelente para esta persona;
-- mostrar cada año o cada materia solo porque existen.
+- ser reutilizable para cualquier graduado antes de ser excelente para Valentina;
+- mostrar cada año o cada materia sólo porque existen.
 
 ## 6. Métrica de éxito
 
@@ -149,8 +158,9 @@ No se mide por pageviews.
 
 El proyecto es exitoso si:
 
-1. ella reconoce detalles personales;
-2. puede recorrerlo cómodamente desde su celular;
-3. amigos y familia pueden entender la historia sin explicación;
+1. Valen reconoce detalles personales y siente que la experiencia fue hecha específicamente para ella;
+2. puede recorrerla cómodamente desde su celular;
+3. amigos y familia entienden la historia sin explicación adicional;
 4. el final produce una sensación clara de cierre;
-5. el sitio sigue siendo un recuerdo valioso después del festejo.
+5. la preview ayuda a descubrir mejores recuerdos y contenido;
+6. el sitio sigue siendo un recuerdo valioso después del festejo.
