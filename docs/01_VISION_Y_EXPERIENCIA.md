@@ -1,58 +1,63 @@
 # 01 — Visión y experiencia
 
-## 1. Nombre conceptual
+## 1. Nombre del proyecto
 
-Nombre provisional:
+**%100 médica**
 
-**Alta Médica**
-
-Opciones futuras:
-
-- Epicrisis
-- Alta Definitiva
-- Caso Cerrado
-- Expediente Dra. [Apellido]
-- Historia de una Médica
-- Código Dra.
-
-El nombre de repositorio no necesita ser el nombre visible del producto.
+El nombre visible del producto es definitivo.
 
 ## 2. Usuario principal
 
-La protagonista.
+Valentina.
 
 ## 3. Usuarios secundarios
 
 - familia;
 - amistades;
 - compañeros de carrera;
-- invitados al festejo.
+- invitados al festejo;
+- colaboradores que verán la preview y aportarán recuerdos antes del release.
 
-## 4. Contexto de uso
+## 4. Contexto de uso final
 
 Caso principal:
 
-1. recibe una tarjeta, cartel o regalo;
-2. encuentra un QR;
-3. abre la web desde el celular;
-4. experimenta el recorrido completo;
-5. comparte algunas pantallas con quienes están alrededor.
+1. Valen termina su última materia;
+2. recibe el elemento físico del festejo con estética de receta/alta;
+3. encuentra un QR;
+4. abre `%100 médica` desde el celular;
+5. recorre la experiencia completa;
+6. comparte la web con quienes quiera después del festejo.
 
-## 5. Duración
+## 5. Contexto de validación previa
 
-Objetivo:
+Antes del release final existe una **preview de Vercel**.
+
+La preview no busca tener todo el contenido definitivo. Su objetivo es:
+
+- validar ritmo narrativo;
+- validar el salto visual clínica → humana → finale;
+- mostrar a amigos/familia qué tipo de material falta;
+- generar preguntas concretas en vez de entrevistas exhaustivas;
+- descubrir anécdotas y fotos que no surgirían sin ver la experiencia.
+
+La preview puede usar datos confirmados, fixtures provisionales y placeholders intencionales. Nunca debe inventar hechos biográficos para verse completa.
+
+## 6. Duración
+
+Objetivo final:
 
 **5–10 minutos** para una primera experiencia completa.
 
-No hacer una web que requiera 30 minutos de lectura.
+La preview de M1 puede ser mucho más corta: sólo debe demostrar el arco narrativo.
 
-## 6. Estructura narrativa
+## 7. Estructura narrativa
 
 ### Escena 00 — Boot
 
 Objetivo: intriga.
 
-Ejemplo:
+Ejemplo conceptual:
 
 > SISTEMA DE EGRESOS  
 > Consultando expediente...
@@ -65,9 +70,7 @@ Secuencia:
 - estado;
 - CTA “Abrir historia clínica”.
 
-Duración máxima sugerida: 4–6 s si el usuario no interactúa.
-
-Debe existir “saltar intro”.
+Debe existir “Saltar intro”.
 
 ---
 
@@ -81,7 +84,7 @@ Presenta:
 - año de egreso;
 - estado;
 - progreso 100%;
-- diagnóstico inicial ficticio;
+- diagnóstico ficticio;
 - pronóstico.
 
 CTA:
@@ -101,13 +104,13 @@ Puede incluir:
 - frase de esa época;
 - primera gran anécdota.
 
-No superar 2–3 bloques cortos.
+Si estos datos todavía no están corroborados durante la preview, la sección puede mantenerse mínima o usar un placeholder editorial claro.
 
 ---
 
 ### Escena 03 — Evolución
 
-Timeline de momentos.
+Timeline de momentos relevantes.
 
 No tiene que ser “cada año”.
 
@@ -122,52 +125,37 @@ Tipos:
 - amistad;
 - hito.
 
-Ejemplo:
-
-> 2022  
-> “No llego al parcial.”  
-> Llegó.
+No usar como reales frases como “no llego”, materias traumáticas o anécdotas si nadie las confirmó.
 
 ---
 
 ### Escena 04 — Signos vitales
 
-Dashboard ficticio.
+Dashboard ficticio de métricas humorísticas.
 
-Ejemplos:
+Ejemplos válidos sólo si están confirmados o son claramente absurdos:
 
-- cafés;
-- horas de sueño;
-- PDFs;
-- “no llego”;
-- finales aprobados;
-- guardias;
-- km recorridos;
-- mensajes enviados al grupo.
+- consumo de mate;
+- fotos de apuntes;
+- horas de estudio;
+- cantidad de grupos;
+- uso intensivo de herramientas de estudio;
+- otras costumbres propias de Valen.
 
-Los valores pueden ser reales o deliberadamente absurdos.
-
-Si son inventados, deben sentirse claramente humorísticos.
+No presentar cifras inventadas con apariencia de dato real.
 
 ---
 
 ### Escena 05 — Estudios complementarios
 
-Galería fotográfica.
-
-Naming:
-
-- estudio;
-- fecha;
-- hallazgo;
-- observación.
-
-Interacciones:
+Galería fotográfica con:
 
 - swipe;
 - tap;
 - zoom;
-- captions.
+- captions;
+- fecha opcional;
+- hallazgo/observación humorística opcional.
 
 ---
 
@@ -181,21 +169,14 @@ Cada persona puede incluir:
 - foto;
 - “especialidad” humorística;
 - vínculo;
-- mensaje corto.
+- mensaje corto/mediano;
+- audio opcional.
 
-Ejemplos:
-
-- Soporte vital
-- Guardia emocional
-- Consultoría pre-parcial
-- Provisión de mate
-- Servicio de rescate académico
+Los mensajes se recolectan principalmente después de mostrar la preview.
 
 ---
 
 ### Escena 07 — Archivo histórico
-
-Cambio visual importante.
 
 La UI clínica cede espacio a un scrapbook.
 
@@ -216,17 +197,11 @@ No debe requerir drag obligatorio en mobile.
 
 ### Escena 08 — Evaluación
 
-Trivia / minijuego de 3–5 preguntas.
+Trivia / minijuego breve de 3–5 preguntas.
 
-Objetivo:
+Objetivo: descanso lúdico, no desafío real.
 
-descanso lúdico, no desafío real.
-
-Ejemplos:
-
-- ¿Qué hacer la noche antes de un final?
-- ¿Cuál fue la frase más repetida?
-- ¿Qué bebida sostuvo la carrera?
+Las mejores preguntas deben surgir de anécdotas recogidas después de la preview.
 
 Debe poder omitirse.
 
@@ -234,34 +209,21 @@ Debe poder omitirse.
 
 ### Escena 09 — Achievements
 
-No necesariamente una pantalla independiente.
+Pueden aparecer durante todo el recorrido.
 
-Los logros pueden aparecer durante todo el recorrido.
-
-Logros sugeridos:
-
-- Anatomía Survivor
-- “No llego”
-- Guardia Infinita
-- Café IV
-- Final Boss
-- 100% Completion
-
-Los achievements secretos agregan rejugabilidad.
+Deben apoyarse en hechos reales, hitos claros o chistes explícitamente absurdos. Los achievements secretos agregan rejugabilidad, pero no contienen información esencial.
 
 ---
 
 ### Escena 10 — Epicrisis
 
-Recapitula la historia.
+Recapitula la historia:
 
-Formato:
-
-- motivo de ingreso;
+- ingreso;
 - evolución;
-- complicaciones;
-- tratamiento;
-- respuesta;
+- dificultades;
+- soporte;
+- resultado;
 - estado al alta.
 
 El tono pasa lentamente del humor a lo emocional.
@@ -270,9 +232,7 @@ El tono pasa lentamente del humor a lo emocional.
 
 ### Escena 11 — Diagnóstico definitivo
 
-Pantalla de transición.
-
-Muy poco contenido.
+Pantalla breve:
 
 > Diagnóstico definitivo  
 > **MÉDICA**
@@ -287,25 +247,20 @@ Se rompe la estética clínica.
 
 Contenido:
 
-- gran fotografía;
-- nombre;
+- fotografía protagonista;
+- Dra. Valentina / forma final acordada;
 - mensaje final;
 - fecha;
 - posible audio;
 - confetti moderado.
 
-Ejemplo conceptual:
+El cierre debe poder funcionar aunque el sonido esté apagado.
 
-> Entraste queriendo convertirte en médica.  
-> Hoy te vas habiéndolo conseguido.
-
----
-
-## 7. Navegación
+## 8. Navegación
 
 ### Principal
 
-Scroll narrativo vertical.
+Scroll narrativo vertical y nativo.
 
 ### Secundaria
 
@@ -313,16 +268,15 @@ Indicador de progreso discreto.
 
 No usar navbar tradicional como eje de la experiencia.
 
-### Accesos rápidos
-
-Después de completar el recorrido:
+### Accesos rápidos después de completar
 
 - volver a fotos;
 - volver al scrapbook;
 - escuchar mensajes;
-- compartir.
+- compartir;
+- repetir experiencia.
 
-## 8. Estados
+## 9. Estados
 
 ### Primera visita
 
@@ -332,12 +286,12 @@ Experiencia guiada.
 
 Puede ofrecer:
 
-**Volver al inicio**  
-**Ir a recuerdos**
+- volver al inicio;
+- ir a recuerdos.
 
-No bloquear contenido por “progreso”.
+No bloquear contenido por progreso.
 
-## 9. Sonido
+## 10. Sonido
 
 Nunca autoplay con volumen.
 
@@ -350,13 +304,24 @@ Opciones:
 
 El sitio debe funcionar completo sin audio.
 
-## 10. Emoción
+## 11. Tono emocional
 
-Distribución sugerida:
+Referencia:
 
-- 35% humor;
-- 35% nostalgia;
-- 20% sorpresa;
-- 10% solemnidad.
+- ~40% humor y anécdota;
+- ~35% nostalgia/recuerdos;
+- ~15% sorpresa lúdica;
+- ~10% cierre emotivo.
 
-El último 15–20% del recorrido debe reducir el humor para que el cierre tenga peso.
+El último 15–20% debe reducir el humor para que el cierre tenga peso.
+
+## 12. Criterio de preview
+
+La primera preview está lograda cuando alguien cercano puede verla y responder preguntas concretas como:
+
+- “¿Qué momento falta en este timeline?”
+- “¿Qué frase real pondrías acá?”
+- “¿Qué foto representa mejor esta etapa?”
+- “¿Qué hábito de estudio de Valen debería aparecer en signos vitales?”
+
+Si la preview sólo genera comentarios visuales y no ayuda a obtener mejores recuerdos, todavía no cumple su propósito de producto.

@@ -81,7 +81,8 @@ Requisitos:
 - entradas cortas;
 - soporte para imagen opcional;
 - soporte para frase;
-- navegación natural por scroll.
+- navegación natural por scroll;
+- no convertir datos provisionales en hechos definitivos.
 
 ---
 
@@ -98,7 +99,7 @@ Tipos soportados:
 - texto;
 - nivel/progreso.
 
-No presentar estadísticas inventadas como datos reales.
+No presentar estadísticas inventadas como datos reales. Si una cifra es deliberadamente absurda, el tono debe dejarlo claro.
 
 ---
 
@@ -135,9 +136,10 @@ Contenido:
 - nombre;
 - rol ficticio;
 - foto opcional;
-- mensaje.
+- mensaje;
+- audio opcional.
 
-No exigir foto para todos.
+No exigir foto ni audio para todos.
 
 ---
 
@@ -175,6 +177,8 @@ Requisitos:
 - resultado gracioso;
 - no guardar datos personales.
 
+Las preguntas definitivas deben surgir de contenido corroborado o de chistes internos aprobados.
+
 ---
 
 # RF-009 — Achievements
@@ -187,7 +191,8 @@ Requisitos:
 
 - toast o tarjeta no intrusiva;
 - persistencia local opcional;
-- listado de desbloqueados accesible al final.
+- listado accesible al final;
+- secretos no requeridos para comprender la historia.
 
 ---
 
@@ -198,9 +203,9 @@ Requisitos:
 Ejemplos:
 
 - múltiples taps;
-- ruta oculta;
+- gesto o interacción contextual;
 - texto en consola;
-- combinación de interacción.
+- sorpresa asociada a elementos personales.
 
 No deben ser necesarios para entender el sitio.
 
@@ -276,7 +281,7 @@ Contenido:
 
 Indicador discreto del recorrido.
 
-No usar “12 pasos pendientes” como un wizard empresarial.
+No usar un wizard empresarial.
 
 Puede representarse como:
 
@@ -309,6 +314,50 @@ Después de completar:
 - ir a recuerdos;
 - abrir galería;
 - ver achievements.
+
+---
+
+# RF-018 — Preview compartible
+
+**Prioridad:** MUST para el proceso de desarrollo
+
+Después del vertical slice de M1 debe existir una preview en Vercel que pueda mostrarse a colaboradores antes de completar el contenido real.
+
+### Requisitos
+
+- debe poder recorrerse en mobile;
+- puede contener fixtures y placeholders;
+- no puede inventar biografía para completar huecos;
+- debe permitir detectar qué falta en timeline, fotos, mensajes, trivia y recuerdos;
+- la URL de preview no es la URL canónica de producción;
+- el feedback debe transformarse en tareas o decisiones accionables.
+
+La falta de audios, mensajes o galería final no bloquea la creación de esta preview.
+
+---
+
+# RF-019 — Ciclo de contenido
+
+**Prioridad:** MUST
+
+El contenido debe evolucionar en estas etapas:
+
+```text
+fixture
+→ preview
+→ feedback
+→ corroboración/recolección dirigida
+→ contenido real
+→ freeze
+```
+
+Durante desarrollo pueden existir estados editoriales `confirmado`, `provisional` y `pendiente`. Esos estados son de autoría/planificación y no tienen por qué aparecer en la UI final.
+
+En producción:
+
+- no quedan placeholders;
+- no quedan preguntas a corroborar visibles;
+- no se presentan hechos conocidos como dudosos o incorrectos.
 
 ---
 
@@ -347,15 +396,17 @@ No se exige PWA completa, pero el contenido crítico no debe depender de APIs ex
 
 ---
 
-# RNF-006 — Privacidad
+# RNF-006 — Indexación y publicación
 
-No indexar contenido personal sin decisión explícita.
+La versión final de producción será **pública e indexable por buscadores**.
 
-Opciones:
+Requisitos:
 
-- `robots: noindex`;
-- URL no pública;
-- protección opcional futura.
+- `robots.txt` debe permitir indexación en producción;
+- no usar `noindex` en producción;
+- canonical debe apuntar a la URL final de Vercel/dominio elegido;
+- previews/development no deben competir como URL canónica;
+- metadata y social preview deben ser deliberadas.
 
 ---
 
@@ -375,4 +426,12 @@ Soporte:
 
 Toda la experiencia visible debe estar en español.
 
-No mezclar labels de UI en inglés salvo easter eggs deliberados.
+No mezclar labels de UI en inglés salvo easter eggs deliberados o nombres de herramientas cuando tenga sentido.
+
+---
+
+# RNF-009 — Contenido desacoplado
+
+Nombres, fechas, frases, fotos, audios, anécdotas, métricas y mensajes personales deben vivir en `src/content/` y validarse mediante contratos de dominio.
+
+Los componentes React no pueden contener biografía hardcodeada.

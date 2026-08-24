@@ -2,25 +2,54 @@
 
 ## 1. Quality gates
 
-Todo PR debe pasar:
+Todo PR de código debe pasar:
 
 ```text
 lint
+format:check
 typecheck
 unit tests
 build
 ```
 
+Cuando corresponda al alcance:
+
+```text
+component tests
+E2E
+accessibility checks
+```
+
 Antes de release:
 
 ```text
-e2e
+E2E completo
 accessibility audit
 performance audit
 mobile device smoke test
+content audit
+indexing/canonical check
 ```
 
-## 2. Unit tests
+## 2. Preview Quality Gate
+
+Antes de compartir la preview de M1 (#27), verificar como mínimo:
+
+- [ ] build saludable
+- [ ] recorrido Boot → Expediente → Finale funcional
+- [ ] 360 px sin overflow
+- [ ] 390 px validado
+- [ ] 430 px validado
+- [ ] sin errores fatales de consola
+- [ ] CTAs principales accesibles
+- [ ] reduced motion no rompe el recorrido
+- [ ] fixtures/placeholders no inventan hechos reales
+- [ ] URL de Vercel Preview compartible
+- [ ] preview no se presenta como URL canónica de producción
+
+La preview **no necesita** contenido completo, Lighthouse perfecto ni todos los assets definitivos. Su objetivo es validar producto y obtener mejor feedback.
+
+## 3. Unit tests
 
 No testear detalles de implementación.
 
@@ -31,9 +60,10 @@ Priorizar:
 - achievements;
 - content selectors;
 - formatting;
-- reduced-motion helpers.
+- reduced-motion helpers;
+- fallbacks ante contenido opcional.
 
-## 3. Component tests
+## 4. Component tests
 
 Priorizar:
 
@@ -42,11 +72,12 @@ Priorizar:
 - quiz;
 - achievement toast;
 - progress;
-- controls.
+- controls;
+- componentes con estados sin imagen/audio.
 
-## 4. E2E
+## 5. E2E
 
-Recorrido crítico:
+Recorrido crítico final:
 
 ```text
 load
@@ -60,33 +91,42 @@ load
 → alta
 ```
 
-## 5. Viewports
+No depender de sleeps arbitrarios ni de la duración exacta de animaciones.
+
+## 6. Viewports
 
 Playwright mínimo:
 
 - 390×844;
 - 1280×800.
 
-Smoke manual:
+Validación responsive adicional:
 
-- Samsung/Chrome o Samsung Internet;
-- iPhone/Safari si se dispone.
+- 360 px;
+- 412 px;
+- 430 px.
 
-## 6. Accesibilidad
+Smoke manual de release:
+
+- Android Chrome;
+- Samsung Internet cuando sea posible;
+- iPhone Safari cuando haya dispositivo disponible.
+
+## 7. Accesibilidad
 
 ### Semántica
 
-- un `h1`;
-- jerarquía coherente;
+- un `h1` principal coherente;
+- jerarquía de headings;
 - `main`;
-- `section`;
+- `section` cuando corresponda;
 - botones reales;
 - links reales.
 
 ### Focus
 
 - visible;
-- modal con focus trap;
+- overlays/lightbox con focus trap;
 - restauración al cerrar;
 - nada `tabindex` positivo.
 
@@ -94,62 +134,86 @@ Smoke manual:
 
 - consultar `prefers-reduced-motion`;
 - no animar texto de forma ilegible;
-- no flashes.
+- no flashes;
+- el contenido final existe aunque se omitan transiciones.
 
 ### Audio
 
 - control explícito;
 - label;
 - estado visible;
-- no autoplay.
+- nunca autoplay con sonido.
 
 ### Imágenes
 
-- alt contextual;
+- alt contextual cuando aportan información;
 - decorativas con alt vacío.
 
-## 7. Performance budget
+## 8. Performance budget
 
 Objetivos iniciales, a ajustar con mediciones:
 
-- JS inicial: mantenerlo tan bajo como sea razonable;
+- JS inicial tan bajo como sea razonable;
 - imagen hero optimizada;
-- audio fuera de critical path;
-- fuentes: máximo 2 familias principales;
+- audio/video fuera del critical path;
+- fuentes limitadas;
 - ninguna fotografía original innecesariamente grande.
 
-## 8. Web Vitals
+## 9. Web Vitals
 
-Objetivos:
+Objetivos de release:
 
 - LCP < 2.5 s;
 - CLS < 0.1;
 - INP < 200 ms en condiciones razonables.
 
-## 9. Imágenes
+No aprobar/rechazar únicamente por un score global de Lighthouse: documentar condiciones y principales costos.
+
+## 10. Imágenes
 
 Proceso recomendado:
 
 ```text
 original
-→ crop
+→ crop si hace falta
 → resize
-→ remove metadata
-→ WebP/AVIF
+→ formato web apropiado
 → final
 ```
 
-Mantener originales fuera de `public`.
+No sacrificar calidad visible por optimizaciones extremas.
 
-## 10. Fallos
+## 11. Contenido
+
+### Preview
+
+Puede incluir:
+
+- confirmado;
+- provisional;
+- placeholder.
+
+No puede inventar biografía para cubrir huecos.
+
+### Production
+
+Debe contener:
+
+- cero placeholders;
+- cero “a corroborar” visibles;
+- cero assets rotos;
+- cero datos conocidos como incorrectos;
+- feedback relevante de #27 resuelto o descartado explícitamente.
+
+## 12. Fallos
 
 La experiencia debe degradar bien.
 
 ### Si falla una imagen
 
-Mostrar fallback visual.
+Mostrar fallback visual o mantener layout coherente.
 
-### Si falla un audio
+### Si falla un audio/video
 
 La historia sigue.
 
@@ -161,28 +225,45 @@ Contenido principal debe aparecer progresivamente.
 
 La siguiente acción sigue disponible.
 
-## 11. Compatibilidad
+## 13. Compatibilidad
 
 No usar features experimentales sin fallback.
 
-## 12. Checklist Release Candidate
+## 14. Indexación
+
+Decisión de producto:
+
+**Producción será indexable.**
+
+Antes del release verificar:
+
+- `robots.txt` permite producción;
+- no existe `noindex` accidental;
+- canonical apunta a producción;
+- preview/development no compiten como canonical;
+- title/description/OG son correctos.
+
+## 15. Checklist Release Candidate
 
 - [ ] lint
+- [ ] format:check
 - [ ] typecheck
 - [ ] tests
 - [ ] build
 - [ ] E2E
-- [ ] axe
-- [ ] Lighthouse mobile
+- [ ] axe + revisión manual
+- [ ] Lighthouse/mobile profiling
 - [ ] 360 px
 - [ ] 390 px
 - [ ] 430 px
 - [ ] Chrome Android
-- [ ] Samsung Internet
-- [ ] Safari iOS
+- [ ] Samsung Internet cuando sea posible
+- [ ] Safari iOS cuando sea posible
 - [ ] reduced motion
 - [ ] sonido apagado inicialmente
 - [ ] galería usable
-- [ ] QR probado
-- [ ] noindex verificado
 - [ ] contenido final auditado
+- [ ] producción indexable
+- [ ] canonical verificado
+- [ ] social preview verificado
+- [ ] QR probado
