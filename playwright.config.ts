@@ -1,5 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const mobileChromium = {
+  ...devices['Pixel 5'],
+  viewport: { width: 390, height: 844 },
+  screen: { width: 390, height: 844 },
+  isMobile: true,
+  hasTouch: true,
+};
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -14,11 +22,7 @@ export default defineConfig({
   projects: [
     {
       name: 'mobile-chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 390, height: 844 },
-        isMobile: true,
-      },
+      use: mobileChromium,
     },
     {
       name: 'desktop-chromium',
