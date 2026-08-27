@@ -1,10 +1,27 @@
 # 05 — Modelo de datos y contenido
 
-## 1. Regla
+## 1. Regla de Oro y Arquitectura de Datos
 
 El contenido debe poder cambiarse sin editar componentes.
 
-Los componentes consumen datos tipados/validados desde `src/content/`; no contienen biografía, frases, fechas, URLs o mensajes personales hardcodeados.
+Los componentes consumen datos tipados/validados desde `src/content/`; **nunca** contienen biografía, frases, fechas, URLs de fotos o mensajes personales hardcodeados dentro del JSX.
+
+### Ubicación del código y contratos
+- **Schemas Zod:** `src/domain/schemas/*.schema.ts` (exportan schemas y tipos inferidos con `z.infer`).
+- **Tipos de Dominio:** `src/domain/types/index.ts` (re-exporta los tipos TypeScript derivados directamente de Zod, sin duplicación manual).
+- **Módulos de Contenido:** `src/content/*.ts` (contiene fixtures y datos desacoplados validados con sus respectivos schemas).
+- **Validación Central:** `src/content/index.ts` (construye el objeto compuesto `ExperienceContent`, ejecuta `validateExperienceContent()` y exporta `experienceContent` validado en tiempo de carga con `ContentValidationError` accionable).
+
+### Convención de Assets Locales
+- **Imágenes:** Deben iniciar con `/images/` y tener extensión válida (`.webp`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.gif`, `.avif`).
+- **Audios:** Deben iniciar con `/audio/` y tener extensión válida (`.mp3`, `.m4a`, `.wav`, `.ogg`, `.aac`, `.webm`).
+- No se admiten URLs externas arbitrarias ni strings vacíos. Todo asset faltante se modela como campo opcional (`.optional()`).
+- Todo elemento de imagen/captura exige obligatoriamente texto alternativo (`alt`) no vacío para accesibilidad (WCAG 2.2 AA).
+
+### Cómo agregar o modificar contenido
+1. Editar o agregar los datos en el módulo correspondiente de `src/content/` (ej. `timeline.ts`, `memories.ts`).
+2. Si se agregan nuevos campos o variantes, actualizar primero el schema Zod correspondiente en `src/domain/schemas/`.
+3. Ejecutar los tests con `npm test` para asegurar que el contenido cumple con todas las restricciones de validación (unión discriminada, unicidad de IDs, formato de assets, etc.).
 
 ## 2. Profile
 
