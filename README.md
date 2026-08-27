@@ -83,6 +83,7 @@ No hace falta completar una entrevista exhaustiva ni reunir todos los assets ant
 | [08_CALIDAD_ACCESIBILIDAD_PERFORMANCE](docs/08_CALIDAD_ACCESIBILIDAD_PERFORMANCE.md) | Gates de calidad                             |
 | [09_DEPLOY_Y_RELEASE](docs/09_DEPLOY_Y_RELEASE.md)                                   | Preview, producción, QR y release            |
 | [10_PREVIEW_Y_RECOLECCION_CONTENIDO](docs/10_PREVIEW_Y_RECOLECCION_CONTENIDO.md)     | Protocolo de feedback y recolección dirigida |
+| [11_OPENDESIGN_UBUNTU](docs/11_OPENDESIGN_UBUNTU.md)                                 | Arranque local, Pi y troubleshooting         |
 
 ## Alcance inicial
 
