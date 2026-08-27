@@ -18,12 +18,9 @@ export const AudioMessageSchema = z.object({
     .optional(),
 });
 
-export const AudioCollectionSchema = z
-  .array(AudioMessageSchema)
-  .min(1, 'Audio collection must contain at least one message')
-  .refine(hasUniqueIds, {
-    message: 'Duplicate audio message IDs are not allowed',
-  });
+export const AudioCollectionSchema = z.array(AudioMessageSchema).refine(hasUniqueIds, {
+  message: 'Duplicate audio message IDs are not allowed',
+});
 
 export type AudioMessage = z.infer<typeof AudioMessageSchema>;
 export type AudioCollection = z.infer<typeof AudioCollectionSchema>;

@@ -50,6 +50,15 @@ describe('Content Layer Central Validation & Modules', () => {
     expect(validated.profile.startYear).toBe(2020);
   });
 
+  it('validateExperienceContent passes when audio collection is empty', () => {
+    const contentWithoutAudio = {
+      ...rawExperienceContent,
+      audio: [],
+    };
+    const validated = validateExperienceContent(contentWithoutAudio);
+    expect(validated.audio).toEqual([]);
+  });
+
   it('validateExperienceContent throws ContentValidationError on invalid input with descriptive errors', () => {
     const invalidInput = {
       ...rawExperienceContent,

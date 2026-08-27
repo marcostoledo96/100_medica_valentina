@@ -6,6 +6,7 @@ describe('FinaleSchema', () => {
     headline: '¡Felicitaciones Médica!',
     message: ['Párrafo de felicitaciones 1.', 'Párrafo de felicitaciones 2.'],
     image: '/images/demo/finale.webp',
+    imageAlt: 'Fotografía emotiva de celebración',
     date: '2026-12-15',
   };
 
@@ -13,6 +14,23 @@ describe('FinaleSchema', () => {
     const result = FinaleSchema.parse(validFinale);
     expect(result.headline).toBe('¡Felicitaciones Médica!');
     expect(result.message).toHaveLength(2);
+    expect(result.imageAlt).toBe('Fotografía emotiva de celebración');
+  });
+
+  it('rejects missing or whitespace-only imageAlt', () => {
+    expect(() =>
+      FinaleSchema.parse({
+        ...validFinale,
+        imageAlt: '',
+      })
+    ).toThrow();
+
+    expect(() =>
+      FinaleSchema.parse({
+        ...validFinale,
+        imageAlt: '   ',
+      })
+    ).toThrow();
   });
 
   it('rejects empty message array', () => {

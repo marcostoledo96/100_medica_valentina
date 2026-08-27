@@ -69,11 +69,25 @@ describe('Shared Schemas & Validation Helpers', () => {
       expect(() => LocalImagePathSchema.parse('/static/img.png')).toThrow();
     });
 
-    it('rejects unsupported extensions or missing extensions', () => {
-      expect(() => LocalImagePathSchema.parse('/images/document.pdf')).toThrow();
-      expect(() => LocalImagePathSchema.parse('/images/script.js')).toThrow();
-      expect(() => LocalImagePathSchema.parse('/images/image')).toThrow();
+    it('rejects path traversal (..) and relative dot segments (.)', () => {
+      expect(() => LocalImagePathSchema.parse('/images/../avatar.webp')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/images/a/../../avatar.webp')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/images/./avatar.webp')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/images/sub/../pic.png')).toThrow();
+    });
+
+    it('rejects double slashes, trailing slashes, and uppercase prefixes', () => {
+      expect(() => LocalImagePathSchema.parse('/images//avatar.webp')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/images/sub//pic.webp')).toThrow();
       expect(() => LocalImagePathSchema.parse('/images/')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/IMAGES/portrait.webp')).toThrow();
+      expect(() => LocalImagePathSchema.parse('/Images/portrait.webp')).toThrow();
+    });
+
+    it('accepts valid deeply nested local paths', () => {
+      expect(LocalImagePathSchema.parse('/images/sub/nested_folder/pic-01.png')).toBe(
+        '/images/sub/nested_folder/pic-01.png'
+      );
     });
   });
 
@@ -89,6 +103,19 @@ describe('Shared Schemas & Validation Helpers', () => {
       expect(LocalAudioPathSchema.parse('/audio/voice.webm')).toBe('/audio/voice.webm');
     });
 
+    it('rejects path traversal (..) and relative dot segments (.) in audio paths', () => {
+      expect(() => LocalAudioPathSchema.parse('/audio/../voice.mp3')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/audio/a/../../voice.mp3')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/audio/./voice.mp3')).toThrow();
+    });
+
+    it('rejects double slashes, trailing slashes, and uppercase prefixes in audio paths', () => {
+      expect(() => LocalAudioPathSchema.parse('/audio//voice.mp3')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/audio/')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/AUDIO/voice.mp3')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/Audio/voice.mp3')).toThrow();
+    });
+
     it('rejects external audio URLs and wrong prefixes', () => {
       expect(() => LocalAudioPathSchema.parse('https://cdn.audio.com/track.mp3')).toThrow();
       expect(() => LocalAudioPathSchema.parse('/media/track.mp3')).toThrow();
@@ -97,8 +124,8 @@ describe('Shared Schemas & Validation Helpers', () => {
 
     it('rejects invalid or missing audio extensions', () => {
       expect(() => LocalAudioPathSchema.parse('/audio/song.mp4')).toThrow();
+      expect(() => LocalAudioPathSchema.parse('/audio/song.exe')).toThrow();
       expect(() => LocalAudioPathSchema.parse('/audio/song')).toThrow();
-      expect(() => LocalAudioPathSchema.parse('/audio/')).toThrow();
     });
   });
 

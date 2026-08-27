@@ -47,6 +47,24 @@ describe('Timeline Schemas', () => {
       expect(() => TimelineEntrySchema.parse({ ...validEntry, date: '   ' })).toThrow();
     });
 
+    it('accepts entry with optional imageAlt', () => {
+      const entryWithAlt = {
+        ...validEntry,
+        imageAlt: 'Fotografía de inicio de cursada',
+      };
+      const result = TimelineEntrySchema.parse(entryWithAlt);
+      expect(result.imageAlt).toBe('Fotografía de inicio de cursada');
+    });
+
+    it('rejects whitespace-only imageAlt when provided', () => {
+      expect(() =>
+        TimelineEntrySchema.parse({
+          ...validEntry,
+          imageAlt: '   ',
+        })
+      ).toThrow();
+    });
+
     it('rejects invalid image path when provided', () => {
       expect(() =>
         TimelineEntrySchema.parse({

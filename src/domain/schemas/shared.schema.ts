@@ -18,7 +18,7 @@ export const LocalImagePathSchema = z
   .string()
   .trim()
   .regex(
-    /^\/images\/[a-zA-Z0-9_\-./]+\.(webp|png|jpg|jpeg|svg|gif|avif)$/i,
+    /^\/images\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(webp|png|jpg|jpeg|svg|gif|avif)$/,
     'Must be a valid local image path starting with /images/ (supported: .webp, .png, .jpg, .jpeg, .svg, .gif, .avif)'
   );
 
@@ -26,7 +26,7 @@ export const LocalAudioPathSchema = z
   .string()
   .trim()
   .regex(
-    /^\/audio\/[a-zA-Z0-9_\-./]+\.(mp3|m4a|wav|ogg|aac|webm)$/i,
+    /^\/audio\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.(mp3|m4a|wav|ogg|aac|webm)$/,
     'Must be a valid local audio path starting with /audio/ (supported: .mp3, .m4a, .wav, .ogg, .aac, .webm)'
   );
 

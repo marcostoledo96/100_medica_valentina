@@ -140,16 +140,30 @@ describe('Memory Schemas (Discriminated Union)', () => {
     });
   });
 
-  describe('Rotation constraints', () => {
-    it('accepts rotation within [-45, 45]', () => {
-      expect(MemorySchema.parse({ ...validNote, rotation: -45 }).rotation).toBe(-45);
-      expect(MemorySchema.parse({ ...validNote, rotation: 45 }).rotation).toBe(45);
-      expect(MemorySchema.parse({ ...validNote, rotation: 0 }).rotation).toBe(0);
+  describe('Rotation constraints (Subtle scrapbook ranges)', () => {
+    it('accepts rotation within variant-specific subtle bounds', () => {
+      expect(MemorySchema.parse({ ...validPhoto, rotation: -4 }).rotation).toBe(-4);
+      expect(MemorySchema.parse({ ...validPhoto, rotation: 4 }).rotation).toBe(4);
+      expect(MemorySchema.parse({ ...validPhoto, rotation: 0 }).rotation).toBe(0);
+
+      expect(MemorySchema.parse({ ...validNote, rotation: -6 }).rotation).toBe(-6);
+      expect(MemorySchema.parse({ ...validNote, rotation: 6 }).rotation).toBe(6);
+
+      expect(MemorySchema.parse({ ...validSticker, rotation: -8 }).rotation).toBe(-8);
+      expect(MemorySchema.parse({ ...validSticker, rotation: 8 }).rotation).toBe(8);
     });
 
-    it('rejects rotation outside [-45, 45]', () => {
-      expect(() => MemorySchema.parse({ ...validNote, rotation: -50 })).toThrow();
-      expect(() => MemorySchema.parse({ ...validNote, rotation: 60 })).toThrow();
+    it('rejects rotation outside variant bounds and extreme angles (e.g. 45 deg)', () => {
+      expect(() => MemorySchema.parse({ ...validPhoto, rotation: -5 })).toThrow();
+      expect(() => MemorySchema.parse({ ...validPhoto, rotation: 5 })).toThrow();
+      expect(() => MemorySchema.parse({ ...validPhoto, rotation: 45 })).toThrow();
+      expect(() => MemorySchema.parse({ ...validPhoto, rotation: -45 })).toThrow();
+
+      expect(() => MemorySchema.parse({ ...validNote, rotation: -7 })).toThrow();
+      expect(() => MemorySchema.parse({ ...validNote, rotation: 7 })).toThrow();
+
+      expect(() => MemorySchema.parse({ ...validSticker, rotation: -9 })).toThrow();
+      expect(() => MemorySchema.parse({ ...validSticker, rotation: 9 })).toThrow();
     });
   });
 

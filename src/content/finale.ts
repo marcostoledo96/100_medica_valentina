@@ -7,6 +7,7 @@ export const rawFinaleContent = {
     'Todo el camino recorrido rinde sus frutos y comienza una vida profesional brillante.',
   ],
   image: '/images/demo/finale.webp',
+  imageAlt: 'Fotografía emotiva de festejo y celebración de graduación médica.',
   date: '2026-12-15',
 };
 

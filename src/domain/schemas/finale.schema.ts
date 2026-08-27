@@ -7,6 +7,7 @@ export const FinaleSchema = z.object({
     .array(NonEmptyStringSchema)
     .min(1, 'Finale message must contain at least one paragraph'),
   image: LocalImagePathSchema,
+  imageAlt: NonEmptyStringSchema,
   date: NonEmptyStringSchema,
 });
 

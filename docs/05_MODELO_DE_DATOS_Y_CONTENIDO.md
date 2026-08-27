@@ -13,10 +13,22 @@ Los componentes consumen datos tipados/validados desde `src/content/`; **nunca**
 - **Validación Central:** `src/content/index.ts` (construye el objeto compuesto `ExperienceContent`, ejecuta `validateExperienceContent()` y exporta `experienceContent` validado en tiempo de carga con `ContentValidationError` accionable).
 
 ### Convención de Assets Locales
-- **Imágenes:** Deben iniciar con `/images/` y tener extensión válida (`.webp`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.gif`, `.avif`).
-- **Audios:** Deben iniciar con `/audio/` y tener extensión válida (`.mp3`, `.m4a`, `.wav`, `.ogg`, `.aac`, `.webm`).
+- **Imágenes:** Deben ser rutas locales estrictamente contenidas bajo `/images/` (ej. `/images/demo/portrait.webp`), con extensiones soportadas (`.webp`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.gif`, `.avif`). Se rechazan path traversal (`..`), segmentos relativos (`.`), barras dobles (`//`), prefijos en mayúsculas y URLs externas.
+- **Audios:** Deben ser rutas locales estrictamente contenidas bajo `/audio/` (ej. `/audio/demo/audio-01.mp3`), con extensiones soportadas (`.mp3`, `.m4a`, `.wav`, `.ogg`, `.aac`, `.webm`). La colección de audios en `ExperienceContent` admite estar vacía (`audio: []`) si no se cuenta con material sonoro inicial.
 - No se admiten URLs externas arbitrarias ni strings vacíos. Todo asset faltante se modela como campo opcional (`.optional()`).
-- Todo elemento de imagen/captura exige obligatoriamente texto alternativo (`alt`) no vacío para accesibilidad (WCAG 2.2 AA).
+
+### Política de Accesibilidad y Texto Alternativo (`alt` / WCAG 2.2 AA)
+- **Imágenes editoriales / narrativas complejas** (`GalleryItem`, `PhotoMemory`, `ScreenshotMemory`, `Finale`): Exigen texto alternativo obligatorio no vacío (`alt` o `imageAlt`) para narrar el contenido a lectores de pantalla.
+- **Imágenes de entidades con nombre** (`Profile.portrait`, `TeamMember.photo`): La alternativa accesible se deriva determinísticamente en el componente UI desde el nombre (`Foto de perfil de ${fullName}`, `Foto de ${name}`).
+- **Imágenes de hitos del timeline** (`TimelineEntry.image`): Admiten `imageAlt?: string` opcional para enriquecimiento editorial, con fallback semántico en UI al `title` del hito.
+- **Elementos puramente decorativos** (`StickerMemory` sin `alt`): Se renderizan como decorativos (`alt=""` o `aria-hidden="true"`).
+
+### Restricciones de Rotación en Scrapbook
+- `photo` y `screenshot`: Rotación leve en el rango `[-4, 4]` grados.
+- `note`: Rotación leve en el rango `[-6, 6]` grados.
+- `text`: Rotación leve en el rango `[-4, 4]` grados.
+- `sticker`: Rotación lúdica en el rango `[-8, 8]` grados.
+- La lectura de contenido nunca depende de una transformación extrema.
 
 ### Cómo agregar o modificar contenido
 1. Editar o agregar los datos en el módulo correspondiente de `src/content/` (ej. `timeline.ts`, `memories.ts`).
@@ -53,6 +65,7 @@ type TimelineEntry = {
     | "funny"
     | "milestone";
   image?: string;
+  imageAlt?: string;
   quote?: string;
 };
 ```
@@ -112,7 +125,7 @@ type Memory =
   | { id: string; type: "sticker"; src: string; alt?: string; rotation?: number };
 ```
 
-`rotation` es sólo decorativo. La lectura nunca depende de una transformación extrema.
+`rotation` es sólo decorativo y se encuentra acotado a rotaciones leves según el tipo de elemento. La lectura nunca depende de una transformación extrema.
 
 ## 8. Quiz
 
@@ -162,6 +175,7 @@ type Finale = {
   headline: string;
   message: string[];
   image: string;
+  imageAlt: string;
   date: string;
 };
 ```

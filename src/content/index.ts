@@ -52,13 +52,13 @@ export function safeValidateExperienceContent(data: unknown = rawExperienceConte
 
 export const experienceContent: ExperienceContent = validateExperienceContent(rawExperienceContent);
 
-export * from './profile';
-export * from './timeline';
-export * from './stats';
-export * from './gallery';
-export * from './team';
-export * from './memories';
-export * from './quiz';
-export * from './achievements';
-export * from './audio';
-export * from './finale';
+export { profileContent } from './profile';
+export { timelineContent } from './timeline';
+export { statsContent } from './stats';
+export { galleryContent } from './gallery';
+export { teamContent } from './team';
+export { memoriesContent } from './memories';
+export { quizContent } from './quiz';
+export { achievementsContent } from './achievements';
+export { audioContent } from './audio';
+export { finaleContent } from './finale';

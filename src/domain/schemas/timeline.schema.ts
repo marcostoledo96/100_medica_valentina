@@ -21,6 +21,7 @@ export const TimelineEntrySchema = z.object({
   description: NonEmptyStringSchema,
   category: TimelineCategorySchema,
   image: LocalImagePathSchema.optional(),
+  imageAlt: NonEmptyStringSchema.optional(),
   quote: NonEmptyStringSchema.optional(),
 });
 

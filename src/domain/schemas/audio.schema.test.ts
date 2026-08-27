@@ -82,8 +82,9 @@ describe('Audio Schemas', () => {
       expect(result).toHaveLength(2);
     });
 
-    it('rejects empty audio collection', () => {
-      expect(() => AudioCollectionSchema.parse([])).toThrow(/at least one message/);
+    it('accepts empty audio collection', () => {
+      const result = AudioCollectionSchema.parse([]);
+      expect(result).toEqual([]);
     });
 
     it('rejects duplicate audio IDs', () => {

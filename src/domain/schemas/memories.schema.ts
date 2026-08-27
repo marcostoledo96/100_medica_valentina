@@ -6,10 +6,34 @@ import {
   NonEmptyStringSchema,
 } from './shared.schema';
 
-const RotationSchema = z
+export const PhotoRotationSchema = z
   .number()
-  .min(-45, 'Rotation cannot be less than -45 degrees')
-  .max(45, 'Rotation cannot be more than 45 degrees')
+  .min(-4, 'Photo rotation cannot be less than -4 degrees')
+  .max(4, 'Photo rotation cannot be more than 4 degrees')
+  .optional();
+
+export const ScreenshotRotationSchema = z
+  .number()
+  .min(-4, 'Screenshot rotation cannot be less than -4 degrees')
+  .max(4, 'Screenshot rotation cannot be more than 4 degrees')
+  .optional();
+
+export const NoteRotationSchema = z
+  .number()
+  .min(-6, 'Note rotation cannot be less than -6 degrees')
+  .max(6, 'Note rotation cannot be more than 6 degrees')
+  .optional();
+
+export const TextRotationSchema = z
+  .number()
+  .min(-4, 'Text rotation cannot be less than -4 degrees')
+  .max(4, 'Text rotation cannot be more than 4 degrees')
+  .optional();
+
+export const StickerRotationSchema = z
+  .number()
+  .min(-8, 'Sticker rotation cannot be less than -8 degrees')
+  .max(8, 'Sticker rotation cannot be more than 8 degrees')
   .optional();
 
 export const PhotoMemorySchema = z
@@ -19,7 +43,7 @@ export const PhotoMemorySchema = z
     src: LocalImagePathSchema,
     alt: NonEmptyStringSchema,
     date: NonEmptyStringSchema.optional(),
-    rotation: RotationSchema,
+    rotation: PhotoRotationSchema,
   })
   .strict();
 
@@ -30,7 +54,7 @@ export const ScreenshotMemorySchema = z
     src: LocalImagePathSchema,
     alt: NonEmptyStringSchema,
     date: NonEmptyStringSchema.optional(),
-    rotation: RotationSchema,
+    rotation: ScreenshotRotationSchema,
   })
   .strict();
 
@@ -40,7 +64,7 @@ export const NoteMemorySchema = z
     type: z.literal('note'),
     text: NonEmptyStringSchema,
     date: NonEmptyStringSchema.optional(),
-    rotation: RotationSchema,
+    rotation: NoteRotationSchema,
   })
   .strict();
 
@@ -50,7 +74,7 @@ export const TextMemorySchema = z
     type: z.literal('text'),
     text: NonEmptyStringSchema,
     date: NonEmptyStringSchema.optional(),
-    rotation: RotationSchema,
+    rotation: TextRotationSchema,
   })
   .strict();
 
@@ -60,7 +84,7 @@ export const StickerMemorySchema = z
     type: z.literal('sticker'),
     src: LocalImagePathSchema,
     alt: NonEmptyStringSchema.optional(),
-    rotation: RotationSchema,
+    rotation: StickerRotationSchema,
   })
   .strict();
 

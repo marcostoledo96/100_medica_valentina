@@ -8,6 +8,7 @@ export const rawTimelineContent = [
     description: 'Contenido demo pendiente de reemplazo por información provista por el PO.',
     category: 'academic' as const,
     image: '/images/demo/timeline-01.webp',
+    imageAlt: 'Fotografía de inicio de cursada en la Facultad de Medicina.',
     quote: 'Frase demo de inicio de cursada.',
   },
   {
@@ -17,6 +18,7 @@ export const rawTimelineContent = [
     description: 'Contenido demo pendiente de reemplazo por anécdota real.',
     category: 'hospital' as const,
     image: '/images/demo/timeline-02.webp',
+    imageAlt: 'Fotografía de práctica médica en hospital universitario.',
   },
   {
     id: 'demo-stage-03',
