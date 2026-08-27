@@ -1,10 +1,39 @@
 # 05 — Modelo de datos y contenido
 
-## 1. Regla
+## 1. Regla de Oro y Arquitectura de Datos
 
 El contenido debe poder cambiarse sin editar componentes.
 
-Los componentes consumen datos tipados/validados desde `src/content/`; no contienen biografía, frases, fechas, URLs o mensajes personales hardcodeados.
+Los componentes consumen datos tipados/validados desde `src/content/`; **nunca** contienen biografía, frases, fechas, URLs de fotos o mensajes personales hardcodeados dentro del JSX.
+
+### Ubicación del código y contratos
+- **Schemas Zod:** `src/domain/schemas/*.schema.ts` (exportan schemas y tipos inferidos con `z.infer`).
+- **Tipos de Dominio:** `src/domain/types/index.ts` (re-exporta los tipos TypeScript derivados directamente de Zod, sin duplicación manual).
+- **Módulos de Contenido:** `src/content/*.ts` (contiene fixtures y datos desacoplados validados con sus respectivos schemas).
+- **Validación Central:** `src/content/index.ts` (construye el objeto compuesto `ExperienceContent`, ejecuta `validateExperienceContent()` y exporta `experienceContent` validado en tiempo de carga con `ContentValidationError` accionable).
+
+### Convención de Assets Locales
+- **Imágenes:** Deben ser rutas locales estrictamente contenidas bajo `/images/` (ej. `/images/demo/portrait.webp`), con extensiones soportadas (`.webp`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.gif`, `.avif`). Se rechazan path traversal (`..`), segmentos relativos (`.`), barras dobles (`//`), prefijos en mayúsculas y URLs externas.
+- **Audios:** Deben ser rutas locales estrictamente contenidas bajo `/audio/` (ej. `/audio/demo/audio-01.mp3`), con extensiones soportadas (`.mp3`, `.m4a`, `.wav`, `.ogg`, `.aac`, `.webm`). La colección de audios en `ExperienceContent` admite estar vacía (`audio: []`) si no se cuenta con material sonoro inicial.
+- No se admiten URLs externas arbitrarias ni strings vacíos. Todo asset faltante se modela como campo opcional (`.optional()`).
+
+### Política de Accesibilidad y Texto Alternativo (`alt` / WCAG 2.2 AA)
+- **Imágenes editoriales / narrativas complejas** (`GalleryItem`, `PhotoMemory`, `ScreenshotMemory`, `Finale`): Exigen texto alternativo obligatorio no vacío (`alt` o `imageAlt`) para narrar el contenido a lectores de pantalla.
+- **Imágenes de entidades con nombre** (`Profile.portrait`, `TeamMember.photo`): La alternativa accesible se deriva determinísticamente en el componente UI desde el nombre (`Foto de perfil de ${fullName}`, `Foto de ${name}`).
+- **Imágenes de hitos del timeline** (`TimelineEntry.image`): Admiten `imageAlt?: string` opcional para enriquecimiento editorial, con fallback semántico en UI al `title` del hito.
+- **Elementos puramente decorativos** (`StickerMemory` sin `alt`): Se renderizan como decorativos (`alt=""` o `aria-hidden="true"`).
+
+### Restricciones de Rotación en Scrapbook
+- `photo` y `screenshot`: Rotación leve en el rango `[-4, 4]` grados.
+- `note`: Rotación leve en el rango `[-6, 6]` grados.
+- `text`: Rotación leve en el rango `[-4, 4]` grados.
+- `sticker`: Rotación lúdica en el rango `[-8, 8]` grados.
+- La lectura de contenido nunca depende de una transformación extrema.
+
+### Cómo agregar o modificar contenido
+1. Editar o agregar los datos en el módulo correspondiente de `src/content/` (ej. `timeline.ts`, `memories.ts`).
+2. Si se agregan nuevos campos o variantes, actualizar primero el schema Zod correspondiente en `src/domain/schemas/`.
+3. Ejecutar los tests con `npm test` para asegurar que el contenido cumple con todas las restricciones de validación (unión discriminada, unicidad de IDs, formato de assets, etc.).
 
 ## 2. Profile
 
@@ -36,6 +65,7 @@ type TimelineEntry = {
     | "funny"
     | "milestone";
   image?: string;
+  imageAlt?: string;
   quote?: string;
 };
 ```
@@ -95,7 +125,7 @@ type Memory =
   | { id: string; type: "sticker"; src: string; alt?: string; rotation?: number };
 ```
 
-`rotation` es sólo decorativo. La lectura nunca depende de una transformación extrema.
+`rotation` es sólo decorativo y se encuentra acotado a rotaciones leves según el tipo de elemento. La lectura nunca depende de una transformación extrema.
 
 ## 8. Quiz
 
@@ -145,6 +175,7 @@ type Finale = {
   headline: string;
   message: string[];
   image: string;
+  imageAlt: string;
   date: string;
 };
 ```

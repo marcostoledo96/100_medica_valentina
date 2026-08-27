@@ -38,3 +38,5 @@ blob-report
 
 # Cache
 .eslintcache
+# Local Pi runtime state
+.atl/
