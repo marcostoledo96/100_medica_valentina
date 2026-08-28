@@ -14,14 +14,14 @@ test.describe('Narrative Shell E2E', () => {
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'clinical');
     await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
       'aria-current',
-      'page'
+      'location'
     );
 
     await timelineLink.click();
 
     await expect(page).toHaveURL(/#linea-tiempo$/);
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
-    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+    await expect(timelineLink).toHaveAttribute('aria-current', 'location');
   });
 
   test('updates the active section from IntersectionObserver visibility', async ({ page }) => {
@@ -33,11 +33,11 @@ test.describe('Narrative Shell E2E', () => {
 
     await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
       'aria-current',
-      'page'
+      'location'
     );
     await timelineSection.scrollIntoViewIfNeeded();
 
-    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+    await expect(timelineLink).toHaveAttribute('aria-current', 'location');
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
   });
 
@@ -129,7 +129,7 @@ test.describe('Narrative Shell E2E', () => {
 
     await expect(page).toHaveURL(/#linea-tiempo$/);
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
-    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+    await expect(timelineLink).toHaveAttribute('aria-current', 'location');
 
     const positiveTabIndices = await page
       .locator('[tabindex]')
@@ -146,16 +146,14 @@ test.describe('Narrative Shell E2E', () => {
   }) => {
     await page.goto('/');
 
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Experiencia narrativa' })
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Inicio' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Final' })).toBeAttached();
     await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
       'aria-current',
-      'page'
+      'location'
     );
   });
 
@@ -167,7 +165,10 @@ test.describe('Narrative Shell E2E', () => {
 
     const rootProvider = page.locator('[data-experience-phase]');
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'finale');
-    await expect(page.getByRole('link', { name: 'Final' })).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByRole('link', { name: 'Final' })).toHaveAttribute(
+      'aria-current',
+      'location'
+    );
 
     const scrollBehavior = await page
       .locator('html')

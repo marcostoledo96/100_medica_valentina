@@ -67,6 +67,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: design-system-visual-evidence
+          name: ui-visual-evidence
           path: test-results/
           if-no-files-found: error
