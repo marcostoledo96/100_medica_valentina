@@ -4,21 +4,29 @@ import { describe, expect, it, vi } from 'vitest';
 import { BootExperience } from './BootExperience';
 import { BOOT_INTRO_SEEN_STORAGE_KEY, type BootStorage } from './bootPersistence';
 
+const PRESERVED_STORAGE_KEY = 'boot-test:unrelated';
+const PRESERVED_STORAGE_VALUE = 'preserve-me';
+
 function createStorage(initialValue: string | null = null): BootStorage & {
   removeItem: ReturnType<typeof vi.fn>;
   value: string | null;
 } {
-  let value = initialValue;
+  const values = new Map<string, string>();
+  if (initialValue !== null) {
+    values.set(BOOT_INTRO_SEEN_STORAGE_KEY, initialValue);
+  }
+  values.set(PRESERVED_STORAGE_KEY, PRESERVED_STORAGE_VALUE);
+
   return {
-    getItem: vi.fn(() => value),
-    setItem: vi.fn((_key: string, nextValue: string) => {
-      value = nextValue;
+    getItem: vi.fn((key: string) => values.get(key) ?? null),
+    setItem: vi.fn((key: string, nextValue: string) => {
+      values.set(key, nextValue);
     }),
-    removeItem: vi.fn(() => {
-      value = null;
+    removeItem: vi.fn((key: string) => {
+      values.delete(key);
     }),
     get value() {
-      return value;
+      return values.get(BOOT_INTRO_SEEN_STORAGE_KEY) ?? null;
     },
   };
 }
@@ -102,9 +110,15 @@ describe('BootExperience controller', () => {
 
     render(<BootExperience storage={storage} />);
 
+    const scene = screen.getByTestId('boot-scan').closest<HTMLElement>('[data-boot-scene="true"]');
+    expect(scene).toHaveAttribute('data-boot-state', 'revisit');
+
     await user.click(screen.getByRole('button', { name: 'Reproducir introducción' }));
 
+    expect(scene).toHaveAttribute('data-boot-state', 'intro');
     expect(screen.getByRole('link', { name: 'Saltar intro' })).toBeVisible();
+    expect(storage.getItem(BOOT_INTRO_SEEN_STORAGE_KEY)).toBe('true');
+    expect(storage.getItem(PRESERVED_STORAGE_KEY)).toBe(PRESERVED_STORAGE_VALUE);
     expect(storage.value).toBe('true');
     expect(storage.removeItem).not.toHaveBeenCalled();
   });

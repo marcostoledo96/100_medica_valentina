@@ -69,6 +69,54 @@ test.describe('Boot Experience E2E', () => {
     expect(storedValue).toBe('true');
   });
 
+  test('restarts scan animation only when replay returns the scene to intro', async ({ page }) => {
+    await openFirstVisit(page);
+
+    await page.getByRole('link', { name: 'Saltar intro' }).click();
+    await expect(page).toHaveURL(/#expediente$/);
+
+    await page.reload();
+    await page.goto('/#inicio');
+    const boot = page.locator('[data-boot-scene="true"]');
+    const scanRows = boot.locator('.boot-scan__row');
+    await expect(boot).toHaveAttribute('data-boot-state', 'revisit');
+
+    const revisitAnimationState = await scanRows.evaluateAll((elements) =>
+      elements.map((element) => ({
+        animationName: window.getComputedStyle(element).animationName,
+        animationCount: element.getAnimations().length,
+      }))
+    );
+    expect(revisitAnimationState).toEqual([
+      { animationName: 'none', animationCount: 0 },
+      { animationName: 'none', animationCount: 0 },
+      { animationName: 'none', animationCount: 0 },
+    ]);
+
+    await boot.getByRole('button', { name: 'Reproducir introducción' }).click();
+    await expect(boot).toHaveAttribute('data-boot-state', 'intro');
+    await expect(boot.getByRole('link', { name: 'Saltar intro' })).toBeVisible();
+
+    const replayAnimationState = await scanRows.evaluateAll((elements) =>
+      elements.map((element) => ({
+        animationName: window.getComputedStyle(element).animationName,
+        animationCount: element.getAnimations().length,
+      }))
+    );
+    expect(
+      replayAnimationState.every(
+        ({ animationName, animationCount }) =>
+          animationName === 'boot-scan-row' && animationCount > 0
+      )
+    ).toBe(true);
+
+    const storedValue = await page.evaluate(
+      (key: string) => window.localStorage.getItem(key),
+      BOOT_INTRO_SEEN_STORAGE_KEY
+    );
+    expect(storedValue).toBe('true');
+  });
+
   test('keeps the 360px scene within the viewport and preserves touch targets', async ({
     page,
   }) => {

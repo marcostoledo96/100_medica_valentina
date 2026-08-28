@@ -1,9 +1,16 @@
 .boot-scan__row {
+  opacity: 1;
+  border-color: var(--border-subtle);
+  transform: none;
   animation-duration: 600ms;
   animation-fill-mode: both;
   animation-iteration-count: 1;
-  animation-name: boot-scan-row;
+  animation-name: none;
   animation-timing-function: ease-out;
+}
+
+[data-boot-scene='true'][data-boot-state='intro'] .boot-scan__row {
+  animation-name: boot-scan-row;
 }
 
 .boot-scan__row:nth-child(2) {
@@ -34,5 +41,9 @@
     opacity: 1;
     border-color: var(--border-subtle);
     transform: none;
+  }
+
+  [data-boot-scene='true'][data-boot-state='intro'] .boot-scan__row {
+    animation: none;
   }
 }
