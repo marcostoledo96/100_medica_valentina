@@ -147,6 +147,13 @@ test.describe('Finale scene', () => {
     await page.locator('[data-section-link="galeria"]').click();
     await expect(page.getByTestId('gallery')).toBeVisible();
 
+    await page.locator('[data-section-link="equipo-tratante"]').click();
+    await expect(page).toHaveURL(/#equipo-tratante$/);
+    const team = page.getByTestId('team');
+    await expect(team).toBeVisible();
+    await expect(team.getByRole('heading', { level: 2, name: 'Equipo tratante' })).toBeVisible();
+    await expect(phase).toHaveAttribute('data-experience-phase', 'human');
+
     await page.locator('[data-section-link="final"]').click();
     await expect(page).toHaveURL(/#final$/);
     await expect(phase).toHaveAttribute('data-experience-phase', 'finale');
@@ -156,5 +163,16 @@ test.describe('Finale scene', () => {
     await expect(stages).toHaveCount(2);
     await expect(stages.nth(0)).toHaveAttribute('data-finale-stage', 'diagnosis');
     await expect(stages.nth(1)).toHaveAttribute('data-finale-stage', 'discharge');
+
+    // Team must render before the Finale in document order (full-journey guard).
+    const teamBeforeFinale = await page.evaluate(() => {
+      const team = document.querySelector('[data-testid="team"]');
+      const finale = document.querySelector('[data-testid="finale-scene"]');
+      if (!team || !finale) {
+        return false;
+      }
+      return Boolean(team.compareDocumentPosition(finale) & Node.DOCUMENT_POSITION_FOLLOWING);
+    });
+    expect(teamBeforeFinale).toBe(true);
   });
 });
