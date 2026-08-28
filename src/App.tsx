@@ -1,6 +1,6 @@
 import { NarrativeShell } from './components/layout/NarrativeShell';
 import { StructuralScenePlaceholder } from './components/showcase/StructuralScenePlaceholder';
-import { expedienteCopy } from './content/expediente';
+import { expedienteContent } from './content/expediente';
 import { narrativeSections } from './content/sections';
 import { profileContent } from './content/profile';
 import { BootExperience } from './features/boot';
@@ -16,7 +16,7 @@ export default function App() {
         ) : section.id === 'expediente' ? (
           <ExpedienteScene
             profile={profileContent}
-            copy={expedienteCopy}
+            copy={expedienteContent}
             nextHref="#linea-tiempo"
           />
         ) : (

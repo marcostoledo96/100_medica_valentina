@@ -1,6 +1,9 @@
-import type { ExpedienteSceneCopy } from '../features/expediente/ExpedienteScene';
+import {
+  ExpedienteContentSchema,
+  type ExpedienteContent,
+} from '../domain/schemas/expediente.schema';
 
-export const expedienteCopy: ExpedienteSceneCopy = {
+export const rawExpedienteContent = {
   eyebrow: 'Registro de egreso · archivo de celebración',
   heading: 'Expediente',
   intro: 'Una ficha breve para celebrar el recorrido que ya está listo para seguir avanzando.',
@@ -23,3 +26,6 @@ export const expedienteCopy: ExpedienteSceneCopy = {
   footer: 'Expediente completo. La próxima página registra cómo fue cambiando esta historia.',
   ctaLabel: 'Ver evolución',
 };
+
+export const expedienteContent: ExpedienteContent =
+  ExpedienteContentSchema.parse(rawExpedienteContent);

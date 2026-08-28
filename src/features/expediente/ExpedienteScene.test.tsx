@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import type { ExpedienteContent } from '../../domain/schemas/expediente.schema';
 import type { Profile } from '../../domain/schemas/profile.schema';
-import { ExpedienteScene, type ExpedienteSceneCopy } from './ExpedienteScene';
+import { ExpedienteScene } from './ExpedienteScene';
 
 const syntheticProfile: Profile = {
   firstName: 'Ada',
@@ -14,7 +15,7 @@ const syntheticProfile: Profile = {
   prognosis: 'FUTURO LUMINOSO',
 };
 
-const syntheticCopy: ExpedienteSceneCopy = {
+const syntheticCopy: ExpedienteContent = {
   eyebrow: 'Fixture dossier eyebrow',
   heading: 'Fixture expediente heading',
   intro: 'Fixture narrative introduction.',

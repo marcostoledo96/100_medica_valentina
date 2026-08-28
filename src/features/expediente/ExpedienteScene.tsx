@@ -1,32 +1,10 @@
 import { useState } from 'react';
+import type { ExpedienteContent } from '../../domain/schemas/expediente.schema';
 import type { Profile } from '../../domain/schemas/profile.schema';
-
-export interface ExpedienteSceneCopy {
-  readonly eyebrow: string;
-  readonly heading: string;
-  readonly intro: string;
-  readonly completionLabel: string;
-  readonly completionAriaLabelPrefix: string;
-  readonly portraitAltPrefix: string;
-  readonly portraitFallbackAriaLabelPrefix: string;
-  readonly portraitUnavailableLabel: string;
-  readonly portraitCaptionPrefix: string;
-  readonly identityLabel: string;
-  readonly identityDescription: string;
-  readonly firstNameLabel: string;
-  readonly fullNameLabel: string;
-  readonly startYearLabel: string;
-  readonly graduationYearLabel: string;
-  readonly statusLabel: string;
-  readonly diagnosisLabel: string;
-  readonly prognosisLabel: string;
-  readonly footer: string;
-  readonly ctaLabel: string;
-}
 
 export interface ExpedienteSceneProps {
   profile: Profile;
-  copy: ExpedienteSceneCopy;
+  copy: ExpedienteContent;
   nextHref: string;
 }
 
