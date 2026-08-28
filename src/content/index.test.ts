@@ -26,7 +26,8 @@ describe('Content Layer Central Validation & Modules', () => {
     expect(experienceContent.stats.length).toBe(statsContent.length);
     expect(experienceContent.gallery.items.length).toBe(galleryContent.items.length);
     expect(experienceContent.gallery.copy.heading).toBe(galleryContent.copy.heading);
-    expect(experienceContent.team.length).toBe(teamContent.length);
+    expect(experienceContent.team.members.length).toBe(teamContent.members.length);
+    expect(experienceContent.team.copy.heading).toBe(teamContent.copy.heading);
     expect(experienceContent.memories.length).toBe(memoriesContent.length);
     expect(experienceContent.quiz.length).toBe(quizContent.length);
     expect(experienceContent.achievements.length).toBe(achievementsContent.length);
@@ -42,7 +43,8 @@ describe('Content Layer Central Validation & Modules', () => {
     expect(statsContent.length).toBeGreaterThan(0);
     expect(galleryContent.items.length).toBeGreaterThan(0);
     expect(galleryContent.copy.heading).toBe('Galería');
-    expect(teamContent.length).toBeGreaterThan(0);
+    expect(teamContent.members.length).toBeGreaterThan(0);
+    expect(teamContent.copy.imageFallback).toBe('Imagen no disponible');
     expect(memoriesContent.length).toBeGreaterThan(0);
     expect(quizContent.length).toBeGreaterThan(0);
     expect(achievementsContent.length).toBeGreaterThan(0);

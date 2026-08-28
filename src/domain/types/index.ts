@@ -12,7 +12,7 @@ export type {
   GalleryCollection,
   GalleryContent,
 } from '../schemas/gallery.schema';
-export type { TeamMember, TeamCollection } from '../schemas/team.schema';
+export type { TeamCopy, TeamContent, TeamMember, TeamCollection } from '../schemas/team.schema';
 export type {
   PhotoMemory,
   ScreenshotMemory,

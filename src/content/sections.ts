@@ -8,8 +8,15 @@ export interface NarrativeSectionConfig {
 }
 
 type StaticNarrativeSectionConfig = NarrativeSectionConfig & {
-  readonly id: 'inicio' | 'expediente' | 'signos-vitales' | 'linea-tiempo' | 'galeria' | 'final';
-  readonly order: 0 | 1 | 2 | 3 | 4 | 5;
+  readonly id:
+    | 'inicio'
+    | 'expediente'
+    | 'signos-vitales'
+    | 'linea-tiempo'
+    | 'galeria'
+    | 'equipo-tratante'
+    | 'final';
+  readonly order: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 };
 
 export const narrativeSections = [
@@ -18,7 +25,8 @@ export const narrativeSections = [
   { id: 'signos-vitales', label: 'Signos vitales', phase: 'clinical', order: 2 },
   { id: 'linea-tiempo', label: 'Línea de tiempo', phase: 'human', order: 3 },
   { id: 'galeria', label: 'Galería', phase: 'human', order: 4 },
-  { id: 'final', label: 'Final', phase: 'finale', order: 5 },
+  { id: 'equipo-tratante', label: 'Equipo tratante', phase: 'human', order: 5 },
+  { id: 'final', label: 'Final', phase: 'finale', order: 6 },
 ] as const satisfies readonly StaticNarrativeSectionConfig[];
 
 export type NarrativeSectionId = (typeof narrativeSections)[number]['id'];

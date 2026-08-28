@@ -23,6 +23,7 @@ describe('App Narrative Shell Integration', () => {
       'signos-vitales',
       'linea-tiempo',
       'galeria',
+      'equipo-tratante',
     ]);
     const placeholderSections = narrativeSections.filter(
       (section) => !implementedSectionIds.has(section.id)
@@ -56,6 +57,13 @@ describe('App Narrative Shell Integration', () => {
     expect(gallery).toBeInTheDocument();
     expect(within(gallery).getByRole('heading', { level: 2, name: 'Galería' })).toBeVisible();
     expect(within(gallery).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
+
+    const team = screen.getByTestId('team');
+    expect(team).toBeInTheDocument();
+    expect(within(team).getByRole('heading', { level: 2, name: 'Equipo tratante' })).toBeVisible();
+    expect(within(team).getByRole('list', { name: 'Personas del equipo tratante' })).toBeVisible();
+    expect(within(team).getAllByRole('article')).toHaveLength(2);
+    expect(within(team).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
 
     expect(screen.getAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
     for (const section of placeholderSections) {
