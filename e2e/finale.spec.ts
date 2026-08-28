@@ -137,6 +137,10 @@ test.describe('Finale scene', () => {
     await expect(phase).toHaveAttribute('data-experience-phase', 'clinical');
 
     await page.getByRole('link', { name: 'Ver evolución' }).click();
+    await expect(page).toHaveURL(/#anamnesis$/);
+    await expect(page.getByTestId('anamnesis')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Continuar la historia' }).click();
     await expect(page).toHaveURL(/#signos-vitales$/);
     await expect(page.getByTestId('vital-signs')).toBeVisible();
 
