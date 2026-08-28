@@ -74,10 +74,11 @@ test.describe('Narrative Shell E2E', () => {
     const links = page
       .getByRole('navigation', { name: 'Progreso del recorrido' })
       .getByRole('link');
-    await expect(links).toHaveCount(7);
+    await expect(links).toHaveCount(8);
     await expect(links).toHaveText([
       'Inicio',
       'Expediente',
+      'Anamnesis',
       'Signos vitales',
       'Línea de tiempo',
       'Galería',
@@ -130,6 +131,8 @@ test.describe('Narrative Shell E2E', () => {
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Expediente', exact: true })).toBeFocused();
     await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Anamnesis', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(vitalSignsLink).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(timelineLink).toBeFocused();
@@ -171,6 +174,7 @@ test.describe('Narrative Shell E2E', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Inicio' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Anamnesis' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Signos vitales' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Galería' })).toBeAttached();

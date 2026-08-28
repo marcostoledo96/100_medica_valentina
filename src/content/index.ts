@@ -1,5 +1,6 @@
 import { ExperienceContent, ExperienceContentSchema } from '../domain/schemas/experience.schema';
 import { ZodError } from 'zod';
+import { rawAnamnesisContent } from './anamnesis';
 import { rawProfileContent } from './profile';
 import { rawTimelineContent } from './timeline';
 import { rawStatsContent } from './stats';
@@ -13,6 +14,7 @@ import { rawFinaleContent } from './finale';
 
 export const rawExperienceContent = {
   profile: rawProfileContent,
+  anamnesis: rawAnamnesisContent,
   timeline: rawTimelineContent,
   stats: rawStatsContent,
   gallery: rawGalleryContent,
@@ -53,6 +55,7 @@ export function safeValidateExperienceContent(data: unknown = rawExperienceConte
 export const experienceContent: ExperienceContent = validateExperienceContent(rawExperienceContent);
 
 export { bootContent, rawBootContent } from './boot';
+export { anamnesisContent } from './anamnesis';
 export { profileContent } from './profile';
 export { timelineContent } from './timeline';
 export { statsContent } from './stats';

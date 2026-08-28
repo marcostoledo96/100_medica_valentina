@@ -1,5 +1,6 @@
 import { NarrativeShell } from './components/layout/NarrativeShell';
 import { StructuralScenePlaceholder } from './components/showcase/StructuralScenePlaceholder';
+import { anamnesisContent } from './content/anamnesis';
 import { audioContent } from './content/audio';
 import { expedienteContent } from './content/expediente';
 import { narrativeSections } from './content/sections';
@@ -10,6 +11,7 @@ import { finaleContent } from './content/finale';
 import { teamContent } from './content/team';
 import { AudioMessages } from './features/audio';
 import { BootExperience } from './features/boot';
+import { Anamnesis } from './features/anamnesis';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
 import { FinaleScene } from './features/finale/FinaleScene';
 import { Gallery } from './features/gallery';
@@ -28,8 +30,10 @@ export default function App() {
           <ExpedienteScene
             profile={profileContent}
             copy={expedienteContent}
-            nextHref="#signos-vitales"
+            nextHref="#anamnesis"
           />
+        ) : section.id === 'anamnesis' ? (
+          <Anamnesis content={anamnesisContent} nextHref="#signos-vitales" />
         ) : section.id === 'signos-vitales' ? (
           <VitalSigns stats={statsContent} heading={section.label} />
         ) : section.id === 'linea-tiempo' ? (
