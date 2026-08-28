@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from './App';
 import { narrativeSections } from './content/sections';
@@ -13,20 +13,46 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders boot and timeline while keeping the remaining sections as placeholders', () => {
+  it('renders implemented features and placeholders only for unimplemented sections', () => {
     render(<App />);
 
     const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
+    const implementedSectionIds = new Set(['inicio', 'expediente', 'linea-tiempo', 'galeria']);
+    const placeholderSections = narrativeSections.filter(
+      (section) => !implementedSectionIds.has(section.id)
+    );
+    const structuralPlaceholder = 'Contenido estructural de demostración.';
+
     expect(openingHeading).toHaveAttribute('id', 'inicio-heading');
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole('link', { name: 'Abrir expediente' })).toBeVisible();
+
+    const expedienteScene = screen.getByTestId('expediente-scene');
+    expect(expedienteScene).toHaveAttribute('aria-labelledby', 'expediente-heading');
     expect(
-      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
-    ).toEqual(narrativeSections.slice(1).map((section) => section.label));
-    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
-      narrativeSections.length - 2
+      within(expedienteScene).getByRole('heading', { level: 2, name: 'Expediente' })
+    ).toBeVisible();
+    expect(within(expedienteScene).getByRole('link', { name: 'Ver evolución' })).toHaveAttribute(
+      'href',
+      '#linea-tiempo'
     );
-    expect(screen.getByTestId('timeline')).toBeInTheDocument();
-    expect(screen.getByTestId('timeline').querySelectorAll('article')).toHaveLength(3);
+
+    const timeline = screen.getByTestId('timeline');
+    expect(timeline).toBeInTheDocument();
+    expect(within(timeline).getAllByRole('article')).toHaveLength(3);
+
+    const gallery = screen.getByTestId('gallery');
+    expect(gallery).toBeInTheDocument();
+    expect(within(gallery).getByRole('heading', { level: 2, name: 'Galería' })).toBeVisible();
+    expect(within(gallery).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
+
+    expect(screen.getAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
+    for (const section of placeholderSections) {
+      const region = screen.getByRole('region', { name: section.label });
+      expect(within(region).getByRole('heading', { level: 2, name: section.label })).toBeVisible();
+      expect(within(region).getByText(structuralPlaceholder)).toBeVisible();
+    }
+
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
     );

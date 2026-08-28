@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ProfileSchema } from './profile.schema';
 import { TimelineCollectionSchema } from './timeline.schema';
 import { StatCollectionSchema } from './stats.schema';
-import { GalleryCollectionSchema } from './gallery.schema';
+import { GalleryContentSchema } from './gallery.schema';
 import { TeamCollectionSchema } from './team.schema';
 import { MemoryCollectionSchema } from './memories.schema';
 import { QuizCollectionSchema } from './quiz.schema';
@@ -14,7 +14,7 @@ export const ExperienceContentSchema = z.object({
   profile: ProfileSchema,
   timeline: TimelineCollectionSchema,
   stats: StatCollectionSchema,
-  gallery: GalleryCollectionSchema,
+  gallery: GalleryContentSchema,
   team: TeamCollectionSchema,
   memories: MemoryCollectionSchema,
   quiz: QuizCollectionSchema,
