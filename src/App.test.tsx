@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from './App';
 import { narrativeSections } from './content/sections';
@@ -13,7 +13,7 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders boot and timeline while keeping the remaining sections as placeholders', () => {
+  it('renders Boot, Expediente, Timeline, and one final placeholder', () => {
     render(<App />);
 
     const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
@@ -22,11 +22,25 @@ describe('App Narrative Shell Integration', () => {
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
     ).toEqual(narrativeSections.slice(1).map((section) => section.label));
-    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
-      narrativeSections.length - 2
+
+    const finalSection = screen.getByRole('region', { name: 'Final' });
+    const placeholderText = 'Contenido estructural de demostración.';
+    expect(within(finalSection).getByText(placeholderText)).toBeVisible();
+    expect(screen.getAllByText(placeholderText)).toHaveLength(1);
+
+    const expedienteScene = screen.getByTestId('expediente-scene');
+    expect(expedienteScene).toHaveAttribute('aria-labelledby', 'expediente-heading');
+    expect(
+      within(expedienteScene).getByRole('heading', { level: 2, name: 'Expediente' })
+    ).toBeVisible();
+    expect(within(expedienteScene).getByRole('link', { name: 'Ver evolución' })).toHaveAttribute(
+      'href',
+      '#linea-tiempo'
     );
-    expect(screen.getByTestId('timeline')).toBeInTheDocument();
-    expect(screen.getByTestId('timeline').querySelectorAll('article')).toHaveLength(3);
+
+    const timeline = screen.getByTestId('timeline');
+    expect(timeline).toBeInTheDocument();
+    expect(within(timeline).getAllByRole('article')).toHaveLength(3);
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
     );
