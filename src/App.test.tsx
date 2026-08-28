@@ -20,6 +20,7 @@ describe('App Narrative Shell Integration', () => {
     const implementedSectionIds = new Set([
       'inicio',
       'expediente',
+      'anamnesis',
       'signos-vitales',
       'linea-tiempo',
       'galeria',
@@ -40,6 +41,14 @@ describe('App Narrative Shell Integration', () => {
       within(expedienteScene).getByRole('heading', { level: 2, name: 'Expediente' })
     ).toBeVisible();
     expect(within(expedienteScene).getByRole('link', { name: 'Ver evolución' })).toHaveAttribute(
+      'href',
+      '#anamnesis'
+    );
+
+    const anamnesis = screen.getByTestId('anamnesis');
+    expect(within(anamnesis).getByRole('heading', { level: 2, name: 'Anamnesis' })).toBeVisible();
+    expect(within(anamnesis).getByRole('blockquote')).toBeVisible();
+    expect(within(anamnesis).getByRole('link', { name: 'Continuar la historia' })).toHaveAttribute(
       'href',
       '#signos-vitales'
     );

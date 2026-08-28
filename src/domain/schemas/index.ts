@@ -1,6 +1,7 @@
 export * from './shared.schema';
 export * from './boot.schema';
 export * from './profile.schema';
+export * from './anamnesis.schema';
 export * from './timeline.schema';
 export * from './stats.schema';
 export * from './gallery.schema';

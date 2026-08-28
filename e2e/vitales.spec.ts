@@ -41,13 +41,18 @@ test.describe('Vital signs E2E', () => {
     await expect(progress).toHaveAttribute('aria-valuenow', '100');
   });
 
-  test('navigates from the expediente CTA to vital signs', async ({ page }) => {
+  test('navigates from the expediente CTA through anamnesis into vital signs', async ({ page }) => {
     await page.goto('/#expediente');
 
     const cta = page.getByRole('link', { name: 'Ver evolución' });
-    await expect(cta).toHaveAttribute('href', '#signos-vitales');
+    await expect(cta).toHaveAttribute('href', '#anamnesis');
 
     await cta.click();
+
+    await expect(page).toHaveURL(/#anamnesis$/);
+    await expect(page.getByTestId('anamnesis')).toBeVisible();
+
+    await page.getByRole('link', { name: 'Continuar la historia' }).click();
 
     await expect(page).toHaveURL(/#signos-vitales$/);
     await expect(page.getByRole('region', { name: 'Signos vitales' })).toBeVisible();

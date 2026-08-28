@@ -12,14 +12,16 @@ describe('Narrative section configuration', () => {
     expect(ids).toEqual([
       'inicio',
       'expediente',
+      'anamnesis',
       'signos-vitales',
       'linea-tiempo',
       'galeria',
       'equipo-tratante',
       'final',
     ]);
-    expect(orders).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(orders).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
     expect(narrativeSections.map((section) => section.phase)).toEqual([
+      'clinical',
       'clinical',
       'clinical',
       'clinical',

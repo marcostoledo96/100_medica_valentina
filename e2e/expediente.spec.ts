@@ -30,7 +30,7 @@ test.describe('Expediente scene', () => {
     await page.goto('/#expediente');
 
     const cta = page.getByRole('link', { name: 'Ver evolución' });
-    await expect(cta).toHaveAttribute('href', '#signos-vitales');
+    await expect(cta).toHaveAttribute('href', '#anamnesis');
 
     const ctaBox = await cta.boundingBox();
     expect(ctaBox, 'CTA should have a rendered touch target').not.toBeNull();
@@ -57,7 +57,7 @@ test.describe('Expediente scene', () => {
     ).toBe(true);
 
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/#signos-vitales$/);
+    await expect(page).toHaveURL(/#anamnesis$/);
   });
 
   test('avoids horizontal overflow at every required viewport', async ({ page }) => {
