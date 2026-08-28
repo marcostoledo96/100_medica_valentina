@@ -5,8 +5,10 @@ import { narrativeSections } from './content/sections';
 import { statsContent } from './content/stats';
 import { profileContent } from './content/profile';
 import { timelineContent } from './content/timeline';
+import { finaleContent } from './content/finale';
 import { BootExperience } from './features/boot';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
+import { FinaleScene } from './features/finale/FinaleScene';
 import { Gallery } from './features/gallery';
 import { Timeline } from './features/timeline';
 import { VitalSigns } from './features/vitales';
@@ -30,6 +32,8 @@ export default function App() {
           <Timeline entries={timelineContent} heading={section.label} />
         ) : section.id === 'galeria' ? (
           <Gallery />
+        ) : section.id === 'final' ? (
+          <FinaleScene content={finaleContent} profile={profileContent} />
         ) : (
           <StructuralScenePlaceholder section={section} />
         )
