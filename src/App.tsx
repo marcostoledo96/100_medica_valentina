@@ -1,5 +1,6 @@
 import { NarrativeShell } from './components/layout/NarrativeShell';
 import { StructuralScenePlaceholder } from './components/showcase/StructuralScenePlaceholder';
+import { audioContent } from './content/audio';
 import { expedienteContent } from './content/expediente';
 import { narrativeSections } from './content/sections';
 import { statsContent } from './content/stats';
@@ -7,6 +8,7 @@ import { profileContent } from './content/profile';
 import { timelineContent } from './content/timeline';
 import { finaleContent } from './content/finale';
 import { teamContent } from './content/team';
+import { AudioMessages } from './features/audio';
 import { BootExperience } from './features/boot';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
 import { FinaleScene } from './features/finale/FinaleScene';
@@ -33,7 +35,10 @@ export default function App() {
         ) : section.id === 'linea-tiempo' ? (
           <Timeline entries={timelineContent} heading={section.label} />
         ) : section.id === 'galeria' ? (
-          <Gallery />
+          <>
+            <Gallery />
+            <AudioMessages messages={audioContent} />
+          </>
         ) : section.id === 'equipo-tratante' ? (
           <Team members={teamContent.members} copy={teamContent.copy} />
         ) : section.id === 'final' ? (
