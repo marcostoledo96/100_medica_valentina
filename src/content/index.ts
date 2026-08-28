@@ -56,7 +56,7 @@ export { bootContent, rawBootContent } from './boot';
 export { profileContent } from './profile';
 export { timelineContent } from './timeline';
 export { statsContent } from './stats';
-export { galleryContent } from './gallery';
+export { galleryContent, galleryCopy, galleryItems } from './gallery';
 export { teamContent } from './team';
 export { memoriesContent } from './memories';
 export { quizContent } from './quiz';

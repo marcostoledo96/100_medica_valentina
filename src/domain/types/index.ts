@@ -6,7 +6,12 @@ export type {
   TimelineCollection,
 } from '../schemas/timeline.schema';
 export type { StatFormat, Stat, StatCollection } from '../schemas/stats.schema';
-export type { GalleryItem, GalleryCollection } from '../schemas/gallery.schema';
+export type {
+  GalleryCopy,
+  GalleryItem,
+  GalleryCollection,
+  GalleryContent,
+} from '../schemas/gallery.schema';
 export type { TeamMember, TeamCollection } from '../schemas/team.schema';
 export type {
   PhotoMemory,

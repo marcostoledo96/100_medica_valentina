@@ -6,6 +6,7 @@ import { profileContent } from './content/profile';
 import { timelineContent } from './content/timeline';
 import { BootExperience } from './features/boot';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
+import { Gallery } from './features/gallery';
 import { Timeline } from './features/timeline';
 
 export default function App() {
@@ -23,6 +24,8 @@ export default function App() {
           />
         ) : section.id === 'linea-tiempo' ? (
           <Timeline entries={timelineContent} heading={section.label} />
+        ) : section.id === 'galeria' ? (
+          <Gallery />
         ) : (
           <StructuralScenePlaceholder section={section} />
         )

@@ -6,6 +6,21 @@ import {
   NonEmptyStringSchema,
 } from './shared.schema';
 
+export const GalleryCopySchema = z.object({
+  eyebrow: NonEmptyStringSchema,
+  heading: NonEmptyStringSchema,
+  intro: NonEmptyStringSchema,
+  carouselLabel: NonEmptyStringSchema,
+  instruction: NonEmptyStringSchema,
+  openImage: NonEmptyStringSchema,
+  imageFallback: NonEmptyStringSchema,
+  findingLabel: NonEmptyStringSchema,
+  dialogEyebrow: NonEmptyStringSchema,
+  close: NonEmptyStringSchema,
+  previous: NonEmptyStringSchema,
+  next: NonEmptyStringSchema,
+});
+
 export const GalleryItemSchema = z.object({
   id: IdSchema,
   image: LocalImagePathSchema,
@@ -23,5 +38,12 @@ export const GalleryCollectionSchema = z
     message: 'Duplicate gallery item IDs are not allowed',
   });
 
+export const GalleryContentSchema = z.object({
+  copy: GalleryCopySchema,
+  items: GalleryCollectionSchema,
+});
+
+export type GalleryCopy = z.infer<typeof GalleryCopySchema>;
 export type GalleryItem = z.infer<typeof GalleryItemSchema>;
 export type GalleryCollection = z.infer<typeof GalleryCollectionSchema>;
+export type GalleryContent = z.infer<typeof GalleryContentSchema>;
