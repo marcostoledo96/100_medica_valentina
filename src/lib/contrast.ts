@@ -42,8 +42,9 @@ export function getRelativeLuminance(hexColor: string): number {
 }
 
 /**
- * Calculates the WCAG 2.2 contrast ratio between two hex colors.
- * Returns a number from 1 to 21 (e.g. 4.5 for 4.5:1).
+ * Calculates the exact WCAG 2.2 contrast ratio between two hex colors.
+ * Returns the unrounded mathematical float ratio in range [1, 21].
+ * Never rounds before decision to avoid false-positive WCAG AA compliance.
  */
 export function getContrastRatio(color1: string, color2: string): number {
   const lum1 = getRelativeLuminance(color1);
@@ -52,7 +53,12 @@ export function getContrastRatio(color1: string, color2: string): number {
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
 
-  const ratio = (brightest + 0.05) / (darkest + 0.05);
-  // Round to 2 decimal places
-  return Math.round(ratio * 100) / 100;
+  return (brightest + 0.05) / (darkest + 0.05);
+}
+
+/**
+ * Formats a contrast ratio for display/logging purposes only.
+ */
+export function formatContrastRatio(ratio: number): string {
+  return `${ratio.toFixed(2)}:1`;
 }

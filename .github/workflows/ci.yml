@@ -62,3 +62,11 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run test:e2e
+
+      - name: Upload Playwright visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-system-visual-evidence
+          path: test-results/
+          if-no-files-found: error
