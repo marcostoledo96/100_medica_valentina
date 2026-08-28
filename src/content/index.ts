@@ -62,3 +62,8 @@ export { quizContent } from './quiz';
 export { achievementsContent } from './achievements';
 export { audioContent } from './audio';
 export { finaleContent } from './finale';
+export {
+  narrativeSections,
+  type NarrativeSectionConfig,
+  type NarrativeSectionId,
+} from './sections';

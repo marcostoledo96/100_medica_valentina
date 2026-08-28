@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './narrative-test';
 
 test.describe('App Smoke Test', () => {
   test('loads successfully and displays experience root without demo content', async ({
@@ -10,24 +10,8 @@ test.describe('App Smoke Test', () => {
     }
 
     const appOrigin = new URL(baseURL).origin;
-    const consoleErrors: string[] = [];
-    const pageErrors: string[] = [];
     const failedRequests: string[] = [];
     const httpErrors: string[] = [];
-
-    page.on('console', (message) => {
-      if (message.type() === 'error') {
-        const location = message.location();
-        const source = location.url
-          ? ` (${location.url}:${location.lineNumber}:${location.columnNumber})`
-          : '';
-        consoleErrors.push(`${message.text()}${source}`);
-      }
-    });
-
-    page.on('pageerror', (error) => {
-      pageErrors.push(error.stack ?? error.message);
-    });
 
     page.on('requestfailed', (request) => {
       if (new URL(request.url()).origin === appOrigin) {
@@ -89,8 +73,6 @@ test.describe('App Smoke Test', () => {
       brokenLocalResources,
       `Broken local resources:\n${brokenLocalResources.join('\n')}`
     ).toHaveLength(0);
-    expect(consoleErrors, `Console errors:\n${consoleErrors.join('\n')}`).toHaveLength(0);
-    expect(pageErrors, `Uncaught page errors:\n${pageErrors.join('\n')}`).toHaveLength(0);
     expect(failedRequests, `Failed requests:\n${failedRequests.join('\n')}`).toHaveLength(0);
     expect(httpErrors, `Same-origin HTTP errors:\n${httpErrors.join('\n')}`).toHaveLength(0);
   });
