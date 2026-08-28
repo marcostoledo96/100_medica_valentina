@@ -6,10 +6,12 @@ import { narrativeSections } from './content/sections';
 import { statsContent } from './content/stats';
 import { profileContent } from './content/profile';
 import { timelineContent } from './content/timeline';
+import { finaleContent } from './content/finale';
 import { teamContent } from './content/team';
 import { BootExperience } from './features/boot';
 import { Anamnesis } from './features/anamnesis';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
+import { FinaleScene } from './features/finale/FinaleScene';
 import { Gallery } from './features/gallery';
 import { Timeline } from './features/timeline';
 import { Team } from './features/team';
@@ -38,6 +40,8 @@ export default function App() {
           <Gallery />
         ) : section.id === 'equipo-tratante' ? (
           <Team members={teamContent.members} copy={teamContent.copy} />
+        ) : section.id === 'final' ? (
+          <FinaleScene content={finaleContent} profile={profileContent} />
         ) : (
           <StructuralScenePlaceholder section={section} />
         )

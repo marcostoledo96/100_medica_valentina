@@ -1,0 +1,18 @@
+/* FinaleScene owns only its reveal motion; layout and typography live in Tailwind token utilities. */
+@media (prefers-reduced-motion: no-preference) {
+  .finale-scene__reveal {
+    animation: finale-reveal 600ms var(--motion-ease-clinical) both;
+  }
+}
+
+@keyframes finale-reveal {
+  from {
+    transform: translateY(1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finale-scene__reveal {
+    animation: none;
+  }
+}
