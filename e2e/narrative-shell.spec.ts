@@ -54,7 +54,7 @@ test.describe('Narrative Shell E2E', () => {
 
     for (const vp of viewports) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto('/');
+      await page.goto('/#linea-tiempo');
       await page.waitForLoadState('domcontentloaded');
 
       const hasHorizontalScroll = await page.evaluate(() => {

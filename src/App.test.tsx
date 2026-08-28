@@ -13,7 +13,7 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders Boot, Expediente, and placeholders for the configured sections', () => {
+  it('renders Boot, Expediente, Timeline, and one final placeholder', () => {
     render(<App />);
 
     const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
@@ -22,10 +22,11 @@ describe('App Narrative Shell Integration', () => {
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
     ).toEqual(narrativeSections.slice(1).map((section) => section.label));
-    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
-      narrativeSections.filter((section) => section.id === 'linea-tiempo' || section.id === 'final')
-        .length
-    );
+
+    const finalSection = screen.getByRole('region', { name: 'Final' });
+    const placeholderText = 'Contenido estructural de demostración.';
+    expect(within(finalSection).getByText(placeholderText)).toBeVisible();
+    expect(screen.getAllByText(placeholderText)).toHaveLength(1);
 
     const expedienteScene = screen.getByTestId('expediente-scene');
     expect(expedienteScene).toHaveAttribute('aria-labelledby', 'expediente-heading');
@@ -36,6 +37,10 @@ describe('App Narrative Shell Integration', () => {
       'href',
       '#linea-tiempo'
     );
+
+    const timeline = screen.getByTestId('timeline');
+    expect(timeline).toBeInTheDocument();
+    expect(within(timeline).getAllByRole('article')).toHaveLength(3);
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
     );

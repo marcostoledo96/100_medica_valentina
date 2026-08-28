@@ -73,6 +73,13 @@ describe('Timeline Schemas', () => {
         })
       ).toThrow();
     });
+
+    it.each(['2020', '2020-00', '2020-13', '20-01', '2020-1', '2020/01'])(
+      'rejects date %s outside the YYYY-MM representation',
+      (date) => {
+        expect(() => TimelineEntrySchema.parse({ ...validEntry, date })).toThrow(/YYYY-MM/);
+      }
+    );
   });
 
   describe('TimelineCollectionSchema', () => {
@@ -89,6 +96,40 @@ describe('Timeline Schemas', () => {
       ];
       const result = TimelineCollectionSchema.parse(collection);
       expect(result).toHaveLength(2);
+    });
+
+    it('preserves the authored order and accepts entries from the same month', () => {
+      const collection = [
+        { ...validEntry, date: '2020-03' },
+        {
+          id: 'demo-stage-02',
+          date: '2020-03',
+          title: 'Hito 2',
+          description: 'Descripción 2',
+          category: 'personal' as const,
+        },
+      ];
+      const result = TimelineCollectionSchema.parse(collection);
+
+      expect(result.map((entry) => entry.id)).toEqual(['demo-stage-01', 'demo-stage-02']);
+      expect(collection.map((entry) => entry.id)).toEqual(['demo-stage-01', 'demo-stage-02']);
+    });
+
+    it('rejects a collection whose authored dates are out of chronological order', () => {
+      const collection = [
+        { ...validEntry, date: '2023-08' },
+        {
+          id: 'demo-stage-02',
+          date: '2020-03',
+          title: 'Hito anterior',
+          description: 'Descripción anterior',
+          category: 'personal' as const,
+        },
+      ];
+
+      expect(() => TimelineCollectionSchema.parse(collection)).toThrow(
+        /Timeline entries must be in chronological order/
+      );
     });
 
     it('rejects empty collection array', () => {

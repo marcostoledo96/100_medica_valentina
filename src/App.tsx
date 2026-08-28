@@ -3,8 +3,10 @@ import { StructuralScenePlaceholder } from './components/showcase/StructuralScen
 import { expedienteContent } from './content/expediente';
 import { narrativeSections } from './content/sections';
 import { profileContent } from './content/profile';
+import { timelineContent } from './content/timeline';
 import { BootExperience } from './features/boot';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
+import { Timeline } from './features/timeline';
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
             copy={expedienteContent}
             nextHref="#linea-tiempo"
           />
+        ) : section.id === 'linea-tiempo' ? (
+          <Timeline entries={timelineContent} heading={section.label} />
         ) : (
           <StructuralScenePlaceholder section={section} />
         )
