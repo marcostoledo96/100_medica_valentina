@@ -6,7 +6,13 @@ export interface ProgressIndicatorProps {
 }
 
 export function ProgressIndicator({ sections, activeSectionId }: ProgressIndicatorProps) {
-  const orderedSections = [...sections].sort((left, right) => left.order - right.order);
+  const orderedSections = sections
+    .map((section, index) => ({ section, index }))
+    .sort((left, right) => left.section.order - right.section.order || left.index - right.index)
+    .map(({ section }) => section);
+  const currentSectionId = orderedSections.some((section) => section.id === activeSectionId)
+    ? activeSectionId
+    : orderedSections[0]?.id;
 
   return (
     <nav
@@ -16,18 +22,18 @@ export function ProgressIndicator({ sections, activeSectionId }: ProgressIndicat
     >
       <div className="mx-auto w-full min-w-0 max-w-5xl px-4 sm:px-6">
         <ol
-          className="grid w-full min-w-0 grid-cols-4 gap-1 py-2"
+          className="flex w-full min-w-0 flex-wrap gap-1 py-2"
           aria-label="Secciones del recorrido"
         >
           {orderedSections.map((section) => {
-            const isActive = section.id === activeSectionId;
+            const isActive = section.id === currentSectionId;
 
             return (
-              <li key={section.id} className="min-w-0">
+              <li key={section.id} className="min-w-[44px] flex-1">
                 <a
                   href={`#${section.id}`}
                   aria-label={section.label}
-                  aria-current={isActive ? 'page' : undefined}
+                  aria-current={isActive ? 'location' : undefined}
                   data-section-link={section.id}
                   className={`group flex min-h-[44px] min-w-[44px] max-w-full flex-col items-center justify-center gap-1 rounded-md px-1 py-1 text-center font-mono text-[0.6875rem] leading-tight transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base sm:text-xs ${
                     isActive

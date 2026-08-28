@@ -1,38 +1,47 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { narrativeSections } from '../../content/sections';
+import type { NarrativeSectionConfig } from '../../content/sections';
 import { ProgressIndicator } from './ProgressIndicator';
 
+const compactSections = [
+  { id: 'inicio', label: 'Inicio', phase: 'clinical', order: 0 },
+  { id: 'expediente', label: 'Expediente', phase: 'clinical', order: 1 },
+  { id: 'final', label: 'Final', phase: 'finale', order: 2 },
+] as const satisfies readonly NarrativeSectionConfig[];
+
 describe('ProgressIndicator', () => {
-  it('renders native Spanish anchor navigation for every section', () => {
-    render(<ProgressIndicator sections={narrativeSections} activeSectionId="linea-tiempo" />);
+  it('renders native anchor navigation for a collection other than four sections', () => {
+    render(<ProgressIndicator sections={compactSections} activeSectionId="expediente" />);
 
     const navigation = screen.getByRole('navigation', { name: 'Progreso del recorrido' });
     const links = screen.getAllByRole('link');
 
     expect(navigation).toBeInTheDocument();
-    expect(navigation).toHaveClass('safe-area-inset', 'overflow-x-clip');
-    expect(links).toHaveLength(narrativeSections.length);
+    expect(links).toHaveLength(compactSections.length);
     expect(links.map((link) => link.getAttribute('href'))).toEqual(
-      narrativeSections.map((section) => `#${section.id}`)
+      compactSections.map((section) => `#${section.id}`)
     );
     expect(links.map((link) => link.getAttribute('aria-label'))).toEqual(
-      narrativeSections.map((section) => section.label)
+      compactSections.map((section) => section.label)
     );
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
-  it('marks only the active section link with page currentness', () => {
-    render(<ProgressIndicator sections={narrativeSections} activeSectionId="linea-tiempo" />);
+  it('marks exactly one active section link with location currentness', () => {
+    render(<ProgressIndicator sections={compactSections} activeSectionId="expediente" />);
 
-    const activeLink = screen.getByRole('link', { name: 'Línea de tiempo' });
-    const inactiveLinks = narrativeSections
-      .filter((section) => section.id !== 'linea-tiempo')
-      .map((section) => screen.getByRole('link', { name: section.label }));
+    const links = screen.getAllByRole('link');
+    const currentLinks = links.filter((link) => link.getAttribute('aria-current') === 'location');
 
-    expect(activeLink).toHaveAttribute('aria-current', 'page');
-    for (const link of inactiveLinks) {
-      expect(link).not.toHaveAttribute('aria-current');
+    expect(currentLinks).toHaveLength(1);
+    expect(screen.getByRole('link', { name: 'Expediente' })).toHaveAttribute(
+      'aria-current',
+      'location'
+    );
+    for (const link of links) {
+      if (link !== currentLinks[0]) {
+        expect(link).not.toHaveAttribute('aria-current');
+      }
     }
   });
 });

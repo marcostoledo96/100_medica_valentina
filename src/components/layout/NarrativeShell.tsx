@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import type * as React from 'react';
 import { ExperiencePhaseProvider } from '../ui/ExperiencePhase/ExperiencePhaseProvider';
 import { narrativeSections, type NarrativeSectionConfig } from '../../content/sections';
 import { useActiveSection } from '../../hooks/useActiveSection';
@@ -6,12 +8,24 @@ import { ProgressIndicator } from './ProgressIndicator';
 
 export interface NarrativeShellProps {
   sections?: readonly NarrativeSectionConfig[];
+  renderSection?: (section: NarrativeSectionConfig) => React.ReactNode;
 }
 
-export function NarrativeShell({ sections = narrativeSections }: NarrativeShellProps) {
-  const activeSectionId = useActiveSection(sections);
-  const activeSection = sections.find((section) => section.id === activeSectionId);
-  const fallbackPhase = sections[0]?.phase ?? 'clinical';
+function sortSections(sections: readonly NarrativeSectionConfig[]): NarrativeSectionConfig[] {
+  return sections
+    .map((section, index) => ({ section, index }))
+    .sort((left, right) => left.section.order - right.section.order || left.index - right.index)
+    .map(({ section }) => section);
+}
+
+export function NarrativeShell({
+  sections = narrativeSections,
+  renderSection,
+}: NarrativeShellProps) {
+  const orderedSections = useMemo(() => sortSections(sections), [sections]);
+  const activeSectionId = useActiveSection(orderedSections);
+  const activeSection = orderedSections.find((section) => section.id === activeSectionId);
+  const fallbackPhase = orderedSections[0]?.phase ?? 'clinical';
   const phase = activeSection?.phase ?? fallbackPhase;
 
   return (
@@ -20,20 +34,13 @@ export function NarrativeShell({ sections = narrativeSections }: NarrativeShellP
       className="min-h-screen bg-surface-base text-text-primary"
     >
       <main id="experience-root" className="w-full overflow-x-clip">
-        <ProgressIndicator sections={sections} activeSectionId={activeSectionId} />
-
-        <header className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">
-            Recorrido narrativo
-          </p>
-          <h1 className="mt-3 max-w-2xl font-display text-4xl font-bold tracking-tight text-text-primary sm:text-6xl">
-            Experiencia narrativa
-          </h1>
-        </header>
+        <ProgressIndicator sections={orderedSections} activeSectionId={activeSectionId} />
 
         <div>
-          {sections.map((section) => (
-            <NarrativeSection key={section.id} section={section} />
+          {orderedSections.map((section) => (
+            <NarrativeSection key={section.id} section={section} ariaLabel={section.label}>
+              {renderSection?.(section)}
+            </NarrativeSection>
           ))}
         </div>
       </main>

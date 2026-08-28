@@ -13,12 +13,16 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders the configured narrative sections and starts in the clinical phase', () => {
+  it('renders configured sections through the neutral placeholder in the clinical phase', () => {
     render(<App />);
 
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Experiencia narrativa' })
-    ).toBeInTheDocument();
+      screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
+    ).toEqual(narrativeSections.map((section) => section.label));
+    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
+      narrativeSections.length
+    );
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
     );
