@@ -1,3 +1,4 @@
+export type { BootContent } from '../schemas/boot.schema';
 export type { Profile } from '../schemas/profile.schema';
 export type {
   TimelineCategory,

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   achievementsContent,
   audioContent,
+  bootContent,
   ContentValidationError,
   experienceContent,
   finaleContent,
@@ -33,6 +34,8 @@ describe('Content Layer Central Validation & Modules', () => {
   });
 
   it('validates all individual domain content fixtures', () => {
+    expect(bootContent.heading).toBe('Inicio');
+    expect(bootContent.isDemo).toBe(true);
     expect(profileContent.fullName).toBeDefined();
     expect(timelineContent.length).toBeGreaterThan(0);
     expect(statsContent.length).toBeGreaterThan(0);
