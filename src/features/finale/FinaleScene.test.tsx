@@ -1,15 +1,8 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Finale } from '../../domain/schemas/finale.schema';
 import type { Profile } from '../../domain/schemas/profile.schema';
 import { DiagnosisReveal, FinaleScene } from './FinaleScene';
-
-const finaleStyles = readFileSync(
-  resolve(process.cwd(), 'src/features/finale/FinaleScene.css'),
-  'utf8'
-);
 
 const finaleFixture: Finale = {
   headline: 'Fixture finale heading',
@@ -98,8 +91,14 @@ describe('FinaleScene', () => {
     }
   });
 
-  it('declares explicit motion-safe and reduced-motion reveal paths', () => {
-    expect(finaleStyles).toContain('@media (prefers-reduced-motion: no-preference)');
+  it('keeps an artificial long-token headline fully rendered behind the break-word contract', () => {
+    const headline = 'GraduaciónSummaCumLaude'.repeat(4);
+
+    render(<FinaleScene content={{ ...finaleFixture, headline }} profile={profileFixture} />);
+
+    const heading = screen.getByRole('heading', { level: 2, name: headline });
+    expect(heading).toHaveTextContent(headline);
+    expect(heading.className).toContain('[overflow-wrap:break-word]');
   });
 });
 

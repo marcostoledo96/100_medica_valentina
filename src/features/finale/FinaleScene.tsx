@@ -64,7 +64,7 @@ export function FinaleScene({ content, profile, provenance = 'provisional' }: Fi
 
       <div
         data-finale-stage="discharge"
-        className="finale-scene__reveal motion-safe:[animation-delay:140ms] grid min-w-0 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]"
+        className="finale-scene__reveal motion-safe:[animation-delay:140ms] grid min-w-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
       >
         <div className="relative aspect-[4/3] min-w-0 overflow-hidden bg-surface-sunken">
           {imageFailed ? (
@@ -103,13 +103,13 @@ export function FinaleScene({ content, profile, provenance = 'provisional' }: Fi
           )}
         </div>
 
-        <div className="flex min-w-0 flex-col items-start justify-center gap-4 bg-surface-raised px-[clamp(1rem,5vw,4rem)] py-[clamp(2rem,5vw,5rem)]">
+        <div className="flex min-w-0 flex-col items-start justify-center gap-4 bg-surface-raised px-[clamp(1rem,4vw,2.5rem)] py-[clamp(2rem,5vw,5rem)]">
           <p className={`${eyebrowClasses} text-accent-secondary [overflow-wrap:anywhere]`}>
             {profile.status}
           </p>
           <h2
             id="finale-heading"
-            className="m-0 max-w-[13ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold leading-[0.96] tracking-[-0.045em] [overflow-wrap:anywhere]"
+            className="m-0 max-w-[13ch] font-display text-[clamp(2.4rem,4vw,3.375rem)] font-bold leading-[0.96] tracking-[-0.045em] [overflow-wrap:break-word]"
           >
             {content.headline}
           </h2>
