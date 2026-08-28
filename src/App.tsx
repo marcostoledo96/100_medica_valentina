@@ -1,10 +1,12 @@
 import { NarrativeShell } from './components/layout/NarrativeShell';
 import { StructuralScenePlaceholder } from './components/showcase/StructuralScenePlaceholder';
+import { audioContent } from './content/audio';
 import { expedienteContent } from './content/expediente';
 import { narrativeSections } from './content/sections';
 import { statsContent } from './content/stats';
 import { profileContent } from './content/profile';
 import { timelineContent } from './content/timeline';
+import { AudioMessages } from './features/audio';
 import { BootExperience } from './features/boot';
 import { ExpedienteScene } from './features/expediente/ExpedienteScene';
 import { Gallery } from './features/gallery';
@@ -29,7 +31,10 @@ export default function App() {
         ) : section.id === 'linea-tiempo' ? (
           <Timeline entries={timelineContent} heading={section.label} />
         ) : section.id === 'galeria' ? (
-          <Gallery />
+          <>
+            <Gallery />
+            <AudioMessages messages={audioContent} />
+          </>
         ) : (
           <StructuralScenePlaceholder section={section} />
         )

@@ -57,6 +57,17 @@ describe('App Narrative Shell Integration', () => {
     expect(within(gallery).getByRole('heading', { level: 2, name: 'Galería' })).toBeVisible();
     expect(within(gallery).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
 
+    const galleryRegion = screen.getByRole('region', { name: 'Galería' });
+    const audioMessages = within(galleryRegion).getByTestId('audio-messages');
+    expect(audioMessages).toBeVisible();
+    expect(
+      within(audioMessages).getByRole('heading', { level: 2, name: 'Voces que acompañan' })
+    ).toBeVisible();
+    expect(within(audioMessages).getByText('Amigo de la Carrera Demo')).toBeVisible();
+    expect(
+      within(audioMessages).getAllByRole('button', { name: /Reproducir mensaje:/ })
+    ).toHaveLength(2);
+
     expect(screen.getAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
     for (const section of placeholderSections) {
       const region = screen.getByRole('region', { name: section.label });
