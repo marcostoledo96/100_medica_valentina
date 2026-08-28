@@ -74,7 +74,15 @@ test.describe('Narrative Shell E2E', () => {
     const links = page
       .getByRole('navigation', { name: 'Progreso del recorrido' })
       .getByRole('link');
-    await expect(links).toHaveCount(5);
+    await expect(links).toHaveCount(6);
+    await expect(links).toHaveText([
+      'Inicio',
+      'Expediente',
+      'Signos vitales',
+      'Línea de tiempo',
+      'Galería',
+      'Final',
+    ]);
 
     for (let index = 0; index < (await links.count()); index += 1) {
       const link = links.nth(index);
@@ -96,6 +104,7 @@ test.describe('Narrative Shell E2E', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const firstLink = page.getByRole('link', { name: 'Inicio' });
+    const vitalSignsLink = page.getByRole('link', { name: 'Signos vitales' });
     const timelineLink = page.getByRole('link', { name: 'Línea de tiempo' });
     const rootProvider = page.locator('[data-experience-phase]');
 
@@ -120,6 +129,8 @@ test.describe('Narrative Shell E2E', () => {
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Expediente', exact: true })).toBeFocused();
     await page.keyboard.press('Tab');
+    await expect(vitalSignsLink).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(timelineLink).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
@@ -129,11 +140,13 @@ test.describe('Narrative Shell E2E', () => {
     await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await expect(timelineLink).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(vitalSignsLink).toBeFocused();
     await page.keyboard.press('Enter');
 
-    await expect(page).toHaveURL(/#linea-tiempo$/);
-    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
-    await expect(timelineLink).toHaveAttribute('aria-current', 'location');
+    await expect(page).toHaveURL(/#signos-vitales$/);
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'clinical');
+    await expect(vitalSignsLink).toHaveAttribute('aria-current', 'location');
 
     const positiveTabIndices = await page
       .locator('[tabindex]')
@@ -153,6 +166,7 @@ test.describe('Narrative Shell E2E', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Inicio' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Signos vitales' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Galería' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Final' })).toBeAttached();

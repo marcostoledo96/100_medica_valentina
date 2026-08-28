@@ -20,10 +20,39 @@ describe('Stats Schemas', () => {
     humorous: true,
   };
 
+  const validProgressStat = {
+    id: 'demo-stat-03',
+    label: 'Materias aprobadas',
+    value: 0,
+    format: 'progress' as const,
+  };
+
   describe('StatSchema', () => {
-    it('accepts numeric and string stat values', () => {
+    it('accepts numeric and string stat values for non-progress formats', () => {
       expect(StatSchema.parse(validNumericStat).value).toBe(1200);
+      expect(StatSchema.parse({ ...validNumericStat, value: '1200' }).value).toBe('1200');
       expect(StatSchema.parse(validStringStat).value).toBe('99.9%');
+      expect(StatSchema.parse({ ...validStringStat, value: 99.9 }).value).toBe(99.9);
+      expect(
+        StatSchema.parse({
+          ...validNumericStat,
+          id: 'demo-stat-text',
+          value: 'Aprobada',
+          format: 'text',
+        }).value
+      ).toBe('Aprobada');
+    });
+
+    it.each([0, 100])('accepts progress value %s', (value) => {
+      expect(StatSchema.parse({ ...validProgressStat, value }).value).toBe(value);
+    });
+
+    it.each([-1, 101])('rejects progress value %s outside the supported range', (value) => {
+      expect(() => StatSchema.parse({ ...validProgressStat, value })).toThrow();
+    });
+
+    it('rejects string progress values', () => {
+      expect(() => StatSchema.parse({ ...validProgressStat, value: '75' })).toThrow();
     });
 
     it('rejects invalid format types', () => {

@@ -9,7 +9,23 @@ describe('Narrative section configuration', () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids.every((id) => /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(id))).toBe(true);
     expect(orders).toEqual([...orders].sort((left, right) => left - right));
-    expect(orders).toEqual([0, 1, 2, 3, 4]);
+    expect(ids).toEqual([
+      'inicio',
+      'expediente',
+      'signos-vitales',
+      'linea-tiempo',
+      'galeria',
+      'final',
+    ]);
+    expect(orders).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(narrativeSections.map((section) => section.phase)).toEqual([
+      'clinical',
+      'clinical',
+      'clinical',
+      'human',
+      'human',
+      'finale',
+    ]);
   });
 
   it('contains only the static fields required by the shell contract', () => {
