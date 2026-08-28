@@ -30,14 +30,16 @@ describe('StatCard', () => {
     rerender(<StatCard stat={textStat} />);
     expect(screen.getByText('Aprobada con honores', { exact: true })).toBeVisible();
   });
-  it('names the article by its label and exposes numeric progress semantics', () => {
+  it('names the article by its label and exposes numeric progress semantics without format badges', () => {
     render(<StatCard stat={progressStat} />);
     const label = screen.getByRole('heading', { level: 3, name: progressStat.label });
     const article = screen.getByRole('article', { name: progressStat.label });
     const progress = screen.getByRole('progressbar', { name: progressStat.label });
     expect(article).toHaveAttribute('aria-labelledby', label.id);
     expect(screen.getByText('100 %', { exact: true })).toBeVisible();
-    expect(screen.getByText('Progreso', { exact: true })).toBeVisible();
+    for (const formatLabel of ['Número', 'Porcentaje', 'Texto', 'Progreso']) {
+      expect(screen.queryByText(formatLabel, { exact: true })).not.toBeInTheDocument();
+    }
     expect(progress).toHaveAttribute('aria-valuemin', '0');
     expect(progress).toHaveAttribute('aria-valuemax', '100');
     expect(progress).toHaveAttribute('aria-valuenow', '100');
@@ -46,31 +48,16 @@ describe('StatCard', () => {
       0
     );
   });
-  it('clamps progress text, width, and aria value at both numeric boundaries', () => {
-    const tooHigh = StatSchema.parse({ ...progressStat, id: 'fixture-high', value: 250 });
-    const tooLow = StatSchema.parse({ ...progressStat, id: 'fixture-low', value: -5 });
-    const { rerender } = render(<StatCard stat={tooHigh} />);
-    expect(screen.getByText('100 %', { exact: true })).toBeVisible();
-    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
-    expect(screen.getByRole('progressbar')).toHaveStyle({ width: '100%' });
-    rerender(<StatCard stat={tooLow} />);
-    expect(screen.getByText('0 %', { exact: true })).toBeVisible();
-    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
-    expect(screen.getByRole('progressbar')).toHaveStyle({ width: '0%' });
-  });
-  it('keeps string progress readable without numeric progress semantics', () => {
-    const stringProgress = StatSchema.parse({
-      id: 'fixture-string-progress',
-      label: progressStat.label,
-      value: 'En observación',
-      format: 'progress',
+  it('passes a schema-valid progress value through to visible and numeric semantics', () => {
+    const authoredProgress = StatSchema.parse({
+      ...progressStat,
+      id: 'fixture-authored',
+      value: 42.5,
     });
-    render(<StatCard stat={stringProgress} />);
-    const article = screen.getByRole('article', { name: stringProgress.label });
-    expect(screen.getByText('En observación', { exact: true })).toBeVisible();
-    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    expect(article.querySelector('[aria-valuenow], [aria-valuemin], [aria-valuemax]')).toBeNull();
-    expect(article.textContent).not.toContain('%');
+    render(<StatCard stat={authoredProgress} />);
+    expect(screen.getByText('42,5 %', { exact: true })).toBeVisible();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '42.5');
+    expect(screen.getByRole('progressbar')).toHaveStyle({ width: '42.5%' });
   });
   it('renders notes and parody disclosure only when supplied', () => {
     const noted = StatSchema.parse({

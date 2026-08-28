@@ -13,16 +13,13 @@ export function StatCard({ stat }: StatCardProps) {
       aria-labelledby={labelId}
       className="w-full min-w-0 overflow-hidden rounded-lg border border-border-default bg-surface-raised p-5 shadow-raised sm:p-6"
     >
-      <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-        <span className={`rounded-full border px-2 py-1 ${format.badgeClassName}`}>
-          {format.label}
-        </span>
-        {stat.humorous ? (
+      {stat.humorous ? (
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
           <span className="rounded-full border border-status-warning bg-status-warning px-2 py-1 text-status-warning-fg">
             {statPresentation.humorDisclosure}
           </span>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
       <h3
         id={labelId}
         className="mt-5 break-words font-display text-2xl font-bold leading-tight text-text-primary"
