@@ -24,6 +24,7 @@ describe('App Narrative Shell Integration', () => {
       'linea-tiempo',
       'galeria',
       'equipo-tratante',
+      'final',
     ]);
     const placeholderSections = narrativeSections.filter(
       (section) => !implementedSectionIds.has(section.id)
@@ -65,7 +66,15 @@ describe('App Narrative Shell Integration', () => {
     expect(within(team).getAllByRole('article')).toHaveLength(2);
     expect(within(team).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
 
-    expect(screen.getAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
+    const finale = screen.getByTestId('finale-scene');
+    expect(finale).toHaveAttribute('data-content-status', 'provisional');
+    expect(within(finale).getByRole('heading', { level: 2, name: 'MÉDICA DEMO' })).toBeVisible();
+    expect(
+      within(finale).getByRole('heading', { level: 2, name: '¡Felicitaciones Médica!' })
+    ).toBeVisible();
+    const returnLink = within(finale).getByRole('link', { name: 'Volver al comienzo' });
+    expect(returnLink).toHaveAttribute('href', '#inicio');
+    expect(screen.queryAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
     for (const section of placeholderSections) {
       const region = screen.getByRole('region', { name: section.label });
       expect(within(region).getByRole('heading', { level: 2, name: section.label })).toBeVisible();
