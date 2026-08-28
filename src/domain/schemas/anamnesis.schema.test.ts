@@ -4,42 +4,47 @@ import {
   AnamnesisContentSchema,
   AnamnesisPhotoSchema,
   AnamnesisQuoteSchema,
-  ProvisionalStatementSchema,
 } from './anamnesis.schema';
 
 const validBlock = {
-  id: 'demo-origen',
+  id: 'origen',
   title: 'Origen',
-  body: 'Texto provisional y editable: este párrafo demo se reemplazará con contenido confirmado.',
+  body: 'La historia comienza con una niña que quería entender por qué el cuerpo hacía lo que hacía.',
 };
 
 const validPhoto = {
-  src: '/images/demo/portrait.webp',
-  alt: 'Retrato demo provisional',
+  src: '/images/profile/portrait.webp',
+  alt: 'Retrato de la protagonista',
   width: 320,
   height: 400,
 };
 
+const validQuote = {
+  text: 'Cuando el expediente se cierra, la historia de verdad empieza a contarse.',
+  attribution: 'Sobre la anamnesis',
+};
+
 const validContent = {
-  eyebrow: 'Anamnesis narrativa · puente provisional',
+  eyebrow: 'Anamnesis narrativa',
   heading: 'Anamnesis',
-  intro: 'Un puente narrativo provisional y editable entre el expediente y la historia completa.',
+  intro: 'Un puente narrativo entre el expediente y la historia completa.',
   blocks: [validBlock],
-  photoFallbackLabel: 'Foto provisional no disponible',
+  photoFallbackLabel: 'Foto no disponible',
   transitionLabel: 'La historia continúa en la línea de tiempo.',
   ctaLabel: 'Continuar la historia',
 };
 
 describe('Anamnesis schemas', () => {
-  it('accepts valid content with optional photo and quote', () => {
+  it('accepts realistic confirmed content that contains none of the demo or provisional markers', () => {
     const result = AnamnesisContentSchema.parse({
       ...validContent,
       photo: validPhoto,
-      quote: { text: 'Frase provisional de demo.', attribution: 'Atribución provisional' },
+      quote: validQuote,
     });
-    expect(result.blocks).toHaveLength(1);
-    expect(result.photo?.src).toBe('/images/demo/portrait.webp');
-    expect(result.quote?.attribution).toBe('Atribución provisional');
+    expect(result.intro).toBe(validContent.intro);
+    expect(result.blocks[0]?.body).toBe(validBlock.body);
+    expect(result.quote?.text).toBe(validQuote.text);
+    expect(result.photo?.src).toBe('/images/profile/portrait.webp');
   });
 
   it('accepts content without photo and quote (both optional)', () => {
@@ -51,7 +56,7 @@ describe('Anamnesis schemas', () => {
   it('enforces at most three narrative blocks', () => {
     const fourBlocks = Array.from({ length: 4 }, (_, index) => ({
       ...validBlock,
-      id: `demo-bloque-${index + 1}`,
+      id: `bloque-${index + 1}`,
     }));
     expect(() => AnamnesisContentSchema.parse({ ...validContent, blocks: fourBlocks })).toThrow(
       /at most three/
@@ -72,9 +77,10 @@ describe('Anamnesis schemas', () => {
 
   it('rejects empty or whitespace-only text fields', () => {
     expect(() => AnamnesisContentSchema.parse({ ...validContent, heading: '  ' })).toThrow();
+    expect(() => AnamnesisContentSchema.parse({ ...validContent, intro: '   ' })).toThrow();
     expect(() => AnamnesisBlockSchema.parse({ ...validBlock, body: '' })).toThrow();
     expect(() =>
-      AnamnesisQuoteSchema.parse({ text: 'Frase provisional', attribution: '   ' })
+      AnamnesisQuoteSchema.parse({ text: 'Una cita cualquiera.', attribution: '   ' })
     ).toThrow();
   });
 
@@ -87,21 +93,10 @@ describe('Anamnesis schemas', () => {
     expect(() => AnamnesisPhotoSchema.parse({ ...validPhoto, width: 0 })).toThrow();
   });
 
-  it('enforces the provisional/demo guard on narrative statements', () => {
-    expect(ProvisionalStatementSchema.safeParse('Texto provisional editable').success).toBe(true);
-    expect(
-      ProvisionalStatementSchema.safeParse('Historia confirmada sin marcadores.').success
-    ).toBe(false);
-    expect(() =>
-      AnamnesisBlockSchema.parse({ ...validBlock, body: 'Relato definitivo confirmado.' })
-    ).toThrow(/demo|provisional/i);
-    expect(() => AnamnesisQuoteSchema.parse({ text: 'Una cita real confirmada.' })).toThrow(
-      /demo|provisional/i
-    );
-  });
-
   it('keeps the quote shape strict: required text, optional attribution', () => {
     expect(() => AnamnesisQuoteSchema.parse({ attribution: 'Solo atribución' })).toThrow();
-    expect(AnamnesisQuoteSchema.parse({ text: 'Frase provisional' }).attribution).toBeUndefined();
+    expect(
+      AnamnesisQuoteSchema.parse({ text: 'Una cita cualquiera.' }).attribution
+    ).toBeUndefined();
   });
 });

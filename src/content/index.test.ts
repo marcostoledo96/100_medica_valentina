@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   achievementsContent,
+  anamnesisContent,
   audioContent,
   bootContent,
   ContentValidationError,
@@ -50,6 +51,28 @@ describe('Content Layer Central Validation & Modules', () => {
     expect(achievementsContent.length).toBeGreaterThan(0);
     expect(audioContent.length).toBeGreaterThan(0);
     expect(finaleContent.headline).toBeDefined();
+  });
+
+  it('includes anamnesis in the validated experience dataset', () => {
+    expect(rawExperienceContent.anamnesis).toBeDefined();
+    expect(experienceContent.anamnesis).toEqual(anamnesisContent);
+  });
+
+  it('fails global validation when anamnesis is structurally invalid', () => {
+    const invalidInput = {
+      ...rawExperienceContent,
+      anamnesis: {
+        ...rawExperienceContent.anamnesis,
+        intro: '   ', // whitespace-only narrative text
+      },
+    };
+
+    const result = safeValidateExperienceContent(invalidInput);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((issue) => issue.path[0] === 'anamnesis')).toBe(true);
+    }
+    expect(() => validateExperienceContent(invalidInput)).toThrow(ContentValidationError);
   });
 
   it('validateExperienceContent passes for valid raw input', () => {

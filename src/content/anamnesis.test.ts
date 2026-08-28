@@ -20,4 +20,13 @@ describe('Anamnesis content fixture', () => {
   it('marks the quote as clearly provisional', () => {
     expect(anamnesisContent.quote?.text.toLowerCase()).toMatch(/provisional|demo/);
   });
+
+  it('keeps every narrative statement explicitly provisional in the fixture layer', () => {
+    // Editorial rule enforced here (fixture layer), not in the domain schema:
+    // unconfirmed copy must stay unmistakably demo/provisional (Issue #8).
+    expect(anamnesisContent.intro.toLowerCase()).toMatch(/provisional|demo|borrador|reemplaz/);
+    for (const block of anamnesisContent.blocks) {
+      expect(block.body.toLowerCase()).toMatch(/provisional|demo|borrador|reemplaz/);
+    }
+  });
 });
