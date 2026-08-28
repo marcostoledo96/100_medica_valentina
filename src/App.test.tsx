@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from './App';
+import { profileContent } from './content/profile';
 import { narrativeSections } from './content/sections';
 
 describe('App Narrative Shell Integration', () => {
@@ -13,15 +14,18 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders configured sections through the neutral placeholder in the clinical phase', () => {
+  it('renders configured sections with the expediente scene and remaining placeholders', () => {
     render(<App />);
 
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
     ).toEqual(narrativeSections.map((section) => section.label));
-    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
-      narrativeSections.length
+    expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(3);
+    expect(screen.getAllByText(profileContent.fullName)).not.toHaveLength(0);
+    expect(screen.getByRole('link', { name: 'Ver evolución' })).toHaveAttribute(
+      'href',
+      '#linea-tiempo'
     );
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
