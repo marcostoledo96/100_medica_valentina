@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { TeamCollectionSchema, TeamMemberSchema } from './team.schema';
+import {
+  TeamCollectionSchema,
+  TeamContentSchema,
+  TeamCopySchema,
+  TeamMemberSchema,
+} from './team.schema';
 
 describe('Team Member Schemas', () => {
   const validMember = {
@@ -8,6 +13,17 @@ describe('Team Member Schemas', () => {
     role: 'Soporte Académico',
     photo: '/images/demo/team-01.webp',
     message: 'Felicitaciones por recibirte de médica.',
+  };
+
+  const validCopy = {
+    eyebrow: 'Red de apoyo',
+    heading: 'Equipo tratante',
+    intro: 'Una introducción de prueba.',
+    listLabel: 'Personas del equipo',
+    roleLabel: 'Rol',
+    messageLabel: 'Mensaje',
+    photoAltPrefix: 'Foto de',
+    imageFallback: 'Imagen no disponible',
   };
 
   describe('TeamMemberSchema', () => {
@@ -74,6 +90,24 @@ describe('Team Member Schemas', () => {
       expect(() => TeamCollectionSchema.parse(duplicate)).toThrow(
         /Duplicate team member IDs are not allowed/
       );
+    });
+
+    describe('TeamCopySchema and TeamContentSchema', () => {
+      it('accepts the generic section copy separately from member data', () => {
+        const parsedCopy = TeamCopySchema.parse(validCopy);
+        const parsedContent = TeamContentSchema.parse({
+          copy: validCopy,
+          members: [validMember],
+        });
+
+        expect(parsedCopy.heading).toBe('Equipo tratante');
+        expect(parsedContent.copy.imageFallback).toBe('Imagen no disponible');
+        expect(parsedContent.members).toHaveLength(1);
+      });
+
+      it('rejects an empty fallback label', () => {
+        expect(() => TeamCopySchema.parse({ ...validCopy, imageFallback: '  ' })).toThrow();
+      });
     });
   });
 });

@@ -74,13 +74,14 @@ test.describe('Narrative Shell E2E', () => {
     const links = page
       .getByRole('navigation', { name: 'Progreso del recorrido' })
       .getByRole('link');
-    await expect(links).toHaveCount(6);
+    await expect(links).toHaveCount(7);
     await expect(links).toHaveText([
       'Inicio',
       'Expediente',
       'Signos vitales',
       'Línea de tiempo',
       'Galería',
+      'Equipo tratante',
       'Final',
     ]);
 
@@ -135,7 +136,11 @@ test.describe('Narrative Shell E2E', () => {
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
     await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Equipo tratante', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Final' })).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.getByRole('link', { name: 'Equipo tratante', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
@@ -169,6 +174,7 @@ test.describe('Narrative Shell E2E', () => {
     await expect(page.getByRole('region', { name: 'Signos vitales' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Galería' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Equipo tratante' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Final' })).toBeAttached();
     await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
       'aria-current',
