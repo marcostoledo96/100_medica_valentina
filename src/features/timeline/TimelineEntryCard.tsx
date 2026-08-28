@@ -34,7 +34,7 @@ export function TimelineEntryCard({ entry }: TimelineEntryCardProps) {
           <span aria-hidden="true" className="text-text-muted">
             /
           </span>
-          <span className="rounded-full border border-border-subtle bg-accent-muted px-2 py-1 text-text-secondary">
+          <span className={`rounded-full border px-2 py-1 ${category.badgeClassName}`}>
             {category.label}
           </span>
         </div>

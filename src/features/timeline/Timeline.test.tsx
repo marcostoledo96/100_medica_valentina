@@ -35,6 +35,34 @@ const timelineFixture: TimelineCollection = TimelineCollectionSchema.parse(
   }))
 );
 
+const categoryContracts = [
+  {
+    category: 'academic',
+    label: 'Académico',
+    badgeClassName: 'border-status-info bg-status-info text-status-info-fg',
+  },
+  {
+    category: 'personal',
+    label: 'Personal',
+    badgeClassName: 'border-accent-secondary bg-accent-secondary text-accent-secondary-fg',
+  },
+  {
+    category: 'hospital',
+    label: 'Hospital',
+    badgeClassName: 'border-status-success bg-status-success text-status-success-fg',
+  },
+  {
+    category: 'funny',
+    label: 'Anécdota',
+    badgeClassName: 'border-status-warning bg-status-warning text-status-warning-fg',
+  },
+  {
+    category: 'milestone',
+    label: 'Hito',
+    badgeClassName: 'border-accent-primary bg-accent-primary text-accent-primary-fg',
+  },
+] as const;
+
 describe('Timeline', () => {
   it('renders ten authored entries in order without mutating the input collection', () => {
     const entries = timelineFixture.map((entry) => ({ ...entry }));
@@ -54,12 +82,28 @@ describe('Timeline', () => {
     expect(entries).toEqual(originalEntries);
   });
 
-  it('communicates every supported category with a visible label', () => {
+  it('renders every canonical category with its visible label and semantic badge contract', () => {
     render(<Timeline entries={timelineFixture} />);
 
-    for (const category of Object.values(timelinePresentation.categories)) {
-      expect(screen.getAllByText(category.label).length).toBeGreaterThan(0);
+    const articles = within(
+      screen.getByRole('list', { name: 'Momentos en orden cronológico' })
+    ).getAllByRole('article');
+
+    for (const contract of categoryContracts) {
+      expect(timelinePresentation.categories[contract.category]).toEqual({
+        label: contract.label,
+        badgeClassName: contract.badgeClassName,
+      });
+
+      const article = articles[fixtureCategories.indexOf(contract.category)];
+      expect(article).toBeDefined();
+
+      const categoryBadge = within(article!).getByText(contract.label, { exact: true });
+      expect(categoryBadge).toBeVisible();
+      expect(categoryBadge).toHaveClass(...contract.badgeClassName.split(' '));
     }
+
+    expect(new Set(categoryContracts.map(({ badgeClassName }) => badgeClassName)).size).toBe(5);
   });
 
   it('keeps entries visible without a scripted reveal state', () => {

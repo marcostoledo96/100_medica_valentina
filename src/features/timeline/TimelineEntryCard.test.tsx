@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { TimelineEntry } from '../../domain/schemas/timeline.schema';
 import { TimelineEntryCard } from './TimelineEntryCard';
+import { timelinePresentation } from './timelinePresentation';
 
 const entryWithoutOptionalContent: TimelineEntry = {
   id: 'fixture-minimal',
@@ -20,7 +21,11 @@ describe('TimelineEntryCard', () => {
     expect(article.tagName).toBe('ARTICLE');
     expect(screen.getByRole('heading', { level: 3, name: 'Hito mínimo' })).toBeInTheDocument();
     expect(screen.getByText('junio de 2021')).toBeVisible();
-    expect(screen.getByText('Personal')).toBeVisible();
+    const categoryBadge = screen.getByText('Personal', { exact: true });
+    expect(categoryBadge).toBeVisible();
+    expect(categoryBadge).toHaveClass(
+      ...timelinePresentation.categories.personal.badgeClassName.split(' ')
+    );
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
     expect(screen.queryByRole('blockquote')).not.toBeInTheDocument();
   });

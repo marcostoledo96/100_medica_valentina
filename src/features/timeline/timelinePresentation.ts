@@ -2,11 +2,26 @@ import type { TimelineCategory } from '../../domain/schemas/timeline.schema';
 
 export const timelinePresentation = {
   categories: {
-    academic: { label: 'Académico' },
-    personal: { label: 'Personal' },
-    hospital: { label: 'Hospital' },
-    funny: { label: 'Anécdota' },
-    milestone: { label: 'Hito' },
+    academic: {
+      label: 'Académico',
+      badgeClassName: 'border-status-info bg-status-info text-status-info-fg',
+    },
+    personal: {
+      label: 'Personal',
+      badgeClassName: 'border-accent-secondary bg-accent-secondary text-accent-secondary-fg',
+    },
+    hospital: {
+      label: 'Hospital',
+      badgeClassName: 'border-status-success bg-status-success text-status-success-fg',
+    },
+    funny: {
+      label: 'Anécdota',
+      badgeClassName: 'border-status-warning bg-status-warning text-status-warning-fg',
+    },
+    milestone: {
+      label: 'Hito',
+      badgeClassName: 'border-accent-primary bg-accent-primary text-accent-primary-fg',
+    },
   },
   months: {
     '01': 'enero',
@@ -23,7 +38,7 @@ export const timelinePresentation = {
     '12': 'diciembre',
   },
 } as const satisfies {
-  categories: Record<TimelineCategory, { label: string }>;
+  categories: Record<TimelineCategory, { label: string; badgeClassName: string }>;
   months: Record<string, string>;
 };
 
