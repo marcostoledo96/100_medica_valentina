@@ -1,0 +1,209 @@
+/**
+ * Semantic Experience Design Tokens for %100 médica
+ * Supports dynamic progression: Clinical -> Human -> Finale
+ * All color pairs verified for strict WCAG 2.2 AA (>= 4.5:1 for normal text).
+ */
+
+:root,
+[data-experience-phase='clinical'] {
+  /* Surface Tokens */
+  --surface-base: #090d12;
+  --surface-raised: #121a24;
+  --surface-overlay: #1b2636;
+  --surface-subtle: #0e151f;
+  --surface-sunken: #05080c;
+
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
+  --text-primary: #f0f6fc;
+  --text-secondary: #94a3b8;
+  --text-muted: #7d91aa;
+  --text-inverse: #090d12;
+
+  /* Border Tokens */
+  --border-default: rgba(51, 65, 85, 0.6);
+  --border-subtle: rgba(51, 65, 85, 0.3);
+  --border-strong: rgba(100, 116, 139, 0.7);
+  --border-accent: rgba(16, 185, 129, 0.4);
+
+  /* Accent Tokens */
+  --accent-primary: #10b981;
+  --accent-primary-hover: #0ca673;
+  --accent-primary-active: #059669;
+  --accent-primary-fg: #031f13;
+  --accent-secondary: #06b6d4;
+  --accent-secondary-fg: #02222b;
+  --accent-muted: rgba(16, 185, 129, 0.12);
+
+  /* Status Tokens & Semantic Foregrounds */
+  --status-success: #10b981;
+  --status-success-fg: #031f13;
+  --status-warning: #f59e0b;
+  --status-warning-fg: #1b0e01;
+  --status-danger: #e11d48;
+  --status-danger-fg: #ffffff;
+  --status-info: #06b6d4;
+  --status-info-fg: #02222b;
+
+  /* Focus Ring */
+  --ring-focus: #10b981;
+  --ring-offset: #090d12;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 4px 12px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-glow: 0 0 20px -3px rgba(16, 185, 129, 0.25);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+}
+
+[data-experience-phase='human'] {
+  /* Surface Tokens */
+  --surface-base: #faf7f2;
+  --surface-raised: #ffffff;
+  --surface-overlay: #f3ece1;
+  --surface-subtle: #f0e8dc;
+  --surface-sunken: #e5dbc9;
+
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
+  --text-primary: #201b17;
+  --text-secondary: #4d453e;
+  --text-muted: #5c544c;
+  --text-inverse: #faf7f2;
+
+  /* Border Tokens */
+  --border-default: rgba(168, 155, 142, 0.45);
+  --border-subtle: rgba(168, 155, 142, 0.25);
+  --border-strong: rgba(120, 113, 108, 0.65);
+  --border-accent: rgba(184, 93, 56, 0.45);
+
+  /* Accent Tokens */
+  --accent-primary: #ad4e29;
+  --accent-primary-hover: #96401e;
+  --accent-primary-active: #803417;
+  --accent-primary-fg: #ffffff;
+  --accent-secondary: #b45309;
+  --accent-secondary-fg: #ffffff;
+  --accent-muted: rgba(184, 93, 56, 0.12);
+
+  /* Status Tokens & Semantic Foregrounds */
+  --status-success: #1e6b47;
+  --status-success-fg: #ffffff;
+  --status-warning: #a14e0b;
+  --status-warning-fg: #ffffff;
+  --status-danger: #b91c1c;
+  --status-danger-fg: #ffffff;
+  --status-info: #1d4ed8;
+  --status-info-fg: #ffffff;
+
+  /* Focus Ring */
+  --ring-focus: #ad4e29;
+  --ring-offset: #faf7f2;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 3px 0 rgba(70, 50, 40, 0.06);
+  --shadow-raised: 0 6px 20px -4px rgba(70, 50, 40, 0.1), 0 2px 6px -1px rgba(70, 50, 40, 0.06);
+  --shadow-glow: 0 4px 20px -2px rgba(184, 93, 56, 0.2);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+[data-experience-phase='finale'] {
+  /* Surface Tokens */
+  --surface-base: #09090b;
+  --surface-raised: #141418;
+  --surface-overlay: #1e1e24;
+  --surface-subtle: #0f0f13;
+  --surface-sunken: #040405;
+
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
+  --text-primary: #fafafa;
+  --text-secondary: #a8a8b3;
+  --text-muted: #888894;
+  --text-inverse: #09090b;
+
+  /* Border Tokens */
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.25);
+  --border-accent: rgba(245, 158, 11, 0.45);
+
+  /* Accent Tokens */
+  --accent-primary: #f59e0b;
+  --accent-primary-hover: #d97706;
+  --accent-primary-active: #cc7006;
+  --accent-primary-fg: #180e02;
+  --accent-secondary: #fbbf24;
+  --accent-secondary-fg: #180e02;
+  --accent-muted: rgba(245, 158, 11, 0.15);
+
+  /* Status Tokens & Semantic Foregrounds */
+  --status-success: #10b981;
+  --status-success-fg: #031f13;
+  --status-warning: #f59e0b;
+  --status-warning-fg: #180e02;
+  --status-danger: #e11d48;
+  --status-danger-fg: #ffffff;
+  --status-info: #38bdf8;
+  --status-info-fg: #032030;
+
+  /* Focus Ring */
+  --ring-focus: #f59e0b;
+  --ring-offset: #09090b;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+  --shadow-raised: 0 8px 30px 0 rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-glow: 0 0 35px -5px rgba(245, 158, 11, 0.35);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+
+/* Global Font Stacks & Motion Tokens */
+:root {
+  --font-ui:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-display: 'Playfair Display', 'Fraunces', Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono:
+    'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+  --font-handwriting: 'Caveat', 'Reenie Beanie', 'Comic Sans MS', cursive;
+
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 250ms;
+  --motion-duration-slow: 400ms;
+
+  --motion-ease-clinical: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-slow: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

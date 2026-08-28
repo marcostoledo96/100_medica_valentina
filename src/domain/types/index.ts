@@ -22,3 +22,4 @@ export type { Achievement, AchievementCollection } from '../schemas/achievements
 export type { AudioMessage, AudioCollection } from '../schemas/audio.schema';
 export type { Finale } from '../schemas/finale.schema';
 export type { ExperienceContent } from '../schemas/experience.schema';
+export type { ExperiencePhase } from './phase';
