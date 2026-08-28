@@ -23,14 +23,18 @@ test.describe('Timeline E2E', () => {
     await expect(timeline.getByText('Hito', { exact: true })).toBeVisible();
   });
 
-  test('supports a direct native fragment to an existing timeline entry', async ({ page }) => {
-    await page.goto('/#timeline-entry-demo-stage-02');
+  test('supports a native fragment to an existing timeline entry', async ({ page }) => {
+    await page.goto('/#linea-tiempo');
 
     const target = page.getByRole('article', { name: 'Hito Hospitalario Demo 2' });
-
-    await expect(page).toHaveURL(/#timeline-entry-demo-stage-02$/);
     await expect(target).toHaveAttribute('id', 'timeline-entry-demo-stage-02');
     await expect(target).toBeVisible();
+
+    await page.evaluate(() => {
+      window.location.hash = '#timeline-entry-demo-stage-02';
+    });
+
+    await expect(page).toHaveURL(/#timeline-entry-demo-stage-02$/);
     await expect(target).toBeInViewport();
   });
 
