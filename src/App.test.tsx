@@ -17,7 +17,13 @@ describe('App Narrative Shell Integration', () => {
     render(<App />);
 
     const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
-    const implementedSectionIds = new Set(['inicio', 'expediente', 'linea-tiempo', 'galeria']);
+    const implementedSectionIds = new Set([
+      'inicio',
+      'expediente',
+      'signos-vitales',
+      'linea-tiempo',
+      'galeria',
+    ]);
     const placeholderSections = narrativeSections.filter(
       (section) => !implementedSectionIds.has(section.id)
     );
@@ -34,8 +40,13 @@ describe('App Narrative Shell Integration', () => {
     ).toBeVisible();
     expect(within(expedienteScene).getByRole('link', { name: 'Ver evolución' })).toHaveAttribute(
       'href',
-      '#linea-tiempo'
+      '#signos-vitales'
     );
+
+    const vitalSigns = screen.getByTestId('vital-signs');
+    expect(
+      within(vitalSigns).getByRole('heading', { level: 2, name: 'Signos vitales' })
+    ).toBeVisible();
 
     const timeline = screen.getByTestId('timeline');
     expect(timeline).toBeInTheDocument();

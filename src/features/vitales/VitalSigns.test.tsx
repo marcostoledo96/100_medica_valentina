@@ -9,13 +9,15 @@ const statsFixture = StatCollectionSchema.parse([
   { id: 'fixture-progress', label: 'Recuperación', value: 75, format: 'progress' },
 ]);
 describe('VitalSigns', () => {
-  it('renders a named section, mobile grid, all formats, and input order', () => {
+  it('renders a named non-region wrapper, mobile grid, all formats, and input order', () => {
     render(<VitalSigns stats={statsFixture} heading="Panel de signos" />);
-    const section = screen.getByRole('region', { name: 'Panel de signos' });
+    const section = screen.getByTestId('vital-signs');
     const heading = within(section).getByRole('heading', { level: 2, name: 'Panel de signos' });
     const list = within(section).getByRole('list');
     const articles = within(list).getAllByRole('article');
+    expect(section.tagName).toBe('DIV');
     expect(section).toHaveAttribute('aria-labelledby', heading.id);
+    expect(screen.queryByRole('region', { name: 'Panel de signos' })).not.toBeInTheDocument();
     expect(list).toHaveClass('grid', 'grid-cols-1', 'gap-3', 'sm:grid-cols-2');
     expect(list.className).not.toMatch(/grid-cols-[3-9]/);
     expect(articles).toHaveLength(4);
@@ -31,7 +33,7 @@ describe('VitalSigns', () => {
     const frozenStats = Object.freeze(statsFixture.map((stat) => Object.freeze({ ...stat })));
     const beforeRender = frozenStats.map((stat) => ({ ...stat }));
     render(<VitalSigns stats={frozenStats} />);
-    const section = screen.getByRole('region', { name: 'Signos vitales' });
+    const section = screen.getByTestId('vital-signs');
     const list = within(section).getByRole('list');
     const article = within(list).getAllByRole('article')[0]!;
     const value = within(article).getByText('1.200', { exact: true });
@@ -44,7 +46,7 @@ describe('VitalSigns', () => {
   });
   it('renders the same immediate user-visible content with reduced motion', () => {
     const normal = render(<VitalSigns stats={statsFixture} heading="Lectura" />);
-    const normalReadback = screen.getByRole('region', { name: 'Lectura' }).textContent;
+    const normalReadback = screen.getByTestId('vital-signs').textContent;
     normal.unmount();
     const originalMatchMedia = window.matchMedia;
     const reducedMotionMedia: MediaQueryList = {
@@ -60,7 +62,7 @@ describe('VitalSigns', () => {
     window.matchMedia = vi.fn(() => reducedMotionMedia);
     try {
       render(<VitalSigns stats={statsFixture} heading="Lectura" />);
-      expect(screen.getByRole('region', { name: 'Lectura' }).textContent).toBe(normalReadback);
+      expect(screen.getByTestId('vital-signs').textContent).toBe(normalReadback);
     } finally {
       window.matchMedia = originalMatchMedia;
     }

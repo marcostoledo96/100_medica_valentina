@@ -14,7 +14,11 @@ export function VitalSigns({
 }: VitalSignsProps) {
   const headingId = useId();
   return (
-    <section aria-labelledby={headingId} className={`w-full max-w-4xl ${className}`}>
+    <div
+      aria-labelledby={headingId}
+      className={`w-full max-w-4xl ${className}`}
+      data-testid="vital-signs"
+    >
       <h2
         className="font-display text-4xl font-bold tracking-tight text-text-primary sm:text-5xl"
         id={headingId}
@@ -28,6 +32,6 @@ export function VitalSigns({
           </li>
         ))}
       </ul>
-    </section>
+    </div>
   );
 }
