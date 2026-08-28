@@ -13,7 +13,7 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
-  it('renders configured sections through the neutral placeholder in the clinical phase', () => {
+  it('renders the timeline feature while keeping the other sections as placeholders', () => {
     render(<App />);
 
     const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
@@ -25,6 +25,8 @@ describe('App Narrative Shell Integration', () => {
     expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
       narrativeSections.length - 1
     );
+    expect(screen.getByTestId('timeline')).toBeInTheDocument();
+    expect(screen.getByTestId('timeline').querySelectorAll('article')).toHaveLength(3);
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
     );
