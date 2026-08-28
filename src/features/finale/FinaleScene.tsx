@@ -4,12 +4,21 @@ import type { Profile } from '../../domain/schemas/profile.schema';
 import './FinaleScene.css';
 
 const DIAGNOSIS_LABEL = 'Diagnóstico definitivo';
-const RETURN_LABEL = 'Volver al inicio';
+const RETURN_LABEL = 'Volver al comienzo';
 const IMAGE_FALLBACK_LABEL = 'Imagen no disponible';
+
+/** Internal provenance classification for displayed fixture content (not user-facing copy). */
+export type ContentProvenance = 'provisional' | 'placeholder';
 
 export interface FinaleSceneProps {
   readonly content: Finale;
   readonly profile: Profile;
+  readonly provenance?: ContentProvenance;
+}
+
+export interface DiagnosisRevealProps {
+  readonly diagnosis: string;
+  readonly provenance?: ContentProvenance;
 }
 
 const eyebrowClasses =
@@ -26,27 +35,32 @@ function getInitials(fullName: string): string {
     .toUpperCase();
 }
 
-export function FinaleScene({ content, profile }: FinaleSceneProps) {
+export function DiagnosisReveal({ diagnosis, provenance = 'provisional' }: DiagnosisRevealProps) {
+  return (
+    <div
+      data-finale-stage="diagnosis"
+      data-content-status={provenance}
+      className="finale-scene__reveal grid min-h-[min(54vh,28rem)] content-center justify-items-start gap-3.5 border-y border-border-subtle px-[clamp(1rem,5vw,4rem)] py-[clamp(3.5rem,12vw,8rem)]"
+    >
+      <p className={`${eyebrowClasses} text-accent-primary`}>{DIAGNOSIS_LABEL}</p>
+      <h2 className="m-0 max-w-full font-display text-[clamp(3.25rem,15vw,8rem)] font-bold leading-[0.92] tracking-[-0.055em] [overflow-wrap:anywhere]">
+        {diagnosis}
+      </h2>
+    </div>
+  );
+}
+
+export function FinaleScene({ content, profile, provenance = 'provisional' }: FinaleSceneProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
     <article
       aria-labelledby="finale-heading"
       data-testid="finale-scene"
+      data-content-status={provenance}
       className="w-full min-w-0 overflow-hidden bg-surface-base text-text-primary"
     >
-      <div
-        data-finale-stage="diagnosis"
-        className="finale-scene__reveal grid min-h-[min(54vh,28rem)] content-center justify-items-start gap-3.5 border-y border-border-subtle px-[clamp(1rem,5vw,4rem)] py-[clamp(3.5rem,12vw,8rem)]"
-      >
-        <p className={`${eyebrowClasses} text-accent-primary`}>{DIAGNOSIS_LABEL}</p>
-        <h2
-          id="finale-diagnosis-heading"
-          className="m-0 max-w-full font-display text-[clamp(3.25rem,15vw,8rem)] font-bold leading-[0.92] tracking-[-0.055em] [overflow-wrap:anywhere]"
-        >
-          {profile.diagnosis}
-        </h2>
-      </div>
+      <DiagnosisReveal diagnosis={profile.diagnosis} provenance={provenance} />
 
       <div
         data-finale-stage="discharge"
@@ -58,6 +72,7 @@ export function FinaleScene({ content, profile }: FinaleSceneProps) {
               role="img"
               aria-label={content.imageAlt}
               data-testid="finale-image-fallback"
+              data-content-status="placeholder"
               className="grid h-full place-content-center justify-items-center gap-2 bg-surface-subtle p-6 text-center font-mono text-xs tracking-wider text-text-secondary"
             >
               <span

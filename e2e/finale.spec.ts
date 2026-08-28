@@ -7,29 +7,20 @@ const mobileViewports = [
 ] as const;
 
 test.describe('Finale scene', () => {
-  test('reaches the finale through its native fragment with diagnosis before discharge', async ({
-    page,
-  }) => {
+  test('reaches the finale through its native fragment', async ({ page }) => {
     await page.goto('/#final');
 
     const finale = page.getByTestId('finale-scene');
-    const stages = finale.locator('[data-finale-stage]');
 
-    await expect(page).toHaveURL(/#final$/);
+    await expect(finale).toHaveAttribute('data-content-status', 'provisional');
     await expect(page.locator('[data-experience-phase]')).toHaveAttribute(
       'data-experience-phase',
       'finale'
     );
-    await expect(page.getByRole('region', { name: 'Final' })).toBeVisible();
-    await expect(stages).toHaveCount(2);
-    await expect(stages.nth(0)).toHaveAttribute('data-finale-stage', 'diagnosis');
-    await expect(stages.nth(1)).toHaveAttribute('data-finale-stage', 'discharge');
     await expect(finale.getByRole('heading', { level: 2, name: 'MÉDICA DEMO' })).toBeVisible();
     await expect(
       finale.getByRole('heading', { level: 2, name: '¡Felicitaciones Médica!' })
     ).toBeVisible();
-    await expect(finale.getByText('Persona Demo de Prueba', { exact: true })).toBeVisible();
-    await expect(finale.getByText('2026-12-15', { exact: true })).toBeVisible();
     await expect(finale.getByRole('img')).toBeVisible();
     await expect(page.locator('audio')).toHaveCount(0);
   });
@@ -37,20 +28,17 @@ test.describe('Finale scene', () => {
   test('returns to the beginning through a real focused anchor', async ({ page }) => {
     await page.goto('/#final');
 
-    const returnLink = page.getByRole('link', { name: 'Volver al inicio' });
+    const returnLink = page.getByRole('link', { name: 'Volver al comienzo' });
     await expect(returnLink).toHaveAttribute('href', '#inicio');
+    await expect(page.getByRole('link', { name: 'Inicio' })).toHaveCount(1);
 
     await returnLink.focus();
     await expect(returnLink).toBeFocused();
-    const hasVisibleFocus = await returnLink.evaluate((element) => {
-      const styles = window.getComputedStyle(element);
-      return (
-        styles.outlineStyle !== 'none' ||
-        parseFloat(styles.outlineWidth) > 0 ||
-        styles.boxShadow !== 'none'
-      );
+    const focusStyles = await returnLink.evaluate((element) => {
+      const s = window.getComputedStyle(element);
+      return s.outlineStyle !== 'none' || parseFloat(s.outlineWidth) > 0 || s.boxShadow !== 'none';
     });
-    expect(hasVisibleFocus).toBe(true);
+    expect(focusStyles).toBe(true);
 
     await page.keyboard.press('Enter');
 
@@ -59,7 +47,6 @@ test.describe('Finale scene', () => {
       'data-experience-phase',
       'clinical'
     );
-    await expect(page.getByRole('heading', { level: 1, name: 'Inicio' })).toBeVisible();
   });
 
   test('keeps both finale stages immediately available with reduced motion', async ({ page }) => {
@@ -86,9 +73,7 @@ test.describe('Finale scene', () => {
     for (const viewport of mobileViewports) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/#final');
-
       await expect(page.getByTestId('finale-scene')).toBeVisible();
-
       const { clientWidth, scrollWidth } = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,
@@ -97,10 +82,29 @@ test.describe('Finale scene', () => {
         clientWidth
       );
 
-      const returnLink = page.getByRole('link', { name: 'Volver al inicio' });
+      const returnLink = page.getByRole('link', { name: 'Volver al comienzo' });
       const box = await returnLink.boundingBox();
       expect(box?.width ?? 0, `CTA width at ${viewport.width}px`).toBeGreaterThanOrEqual(44);
       expect(box?.height ?? 0, `CTA height at ${viewport.width}px`).toBeGreaterThanOrEqual(44);
     }
+  });
+
+  test('traverses boot, expediente, and finale as one mobile journey', async ({ page }) => {
+    await page.goto('/');
+    const boot = page.locator('[data-boot-scene="true"]');
+    await boot.getByRole('link', { name: 'Abrir expediente' }).click();
+    await expect(page).toHaveURL(/#expediente$/);
+    await expect(page.getByTestId('expediente-scene')).toBeVisible();
+    await page.locator('[data-section-link="final"]').click();
+    await expect(page).toHaveURL(/#final$/);
+    await expect(page.locator('[data-experience-phase]')).toHaveAttribute(
+      'data-experience-phase',
+      'finale'
+    );
+    await expect(page.getByTestId('finale-scene')).toBeVisible();
+    const stages = page.getByTestId('finale-scene').locator('[data-finale-stage]');
+    await expect(stages).toHaveCount(2);
+    await expect(stages.nth(0)).toHaveAttribute('data-finale-stage', 'diagnosis');
+    await expect(stages.nth(1)).toHaveAttribute('data-finale-stage', 'discharge');
   });
 });

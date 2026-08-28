@@ -59,11 +59,12 @@ describe('App Narrative Shell Integration', () => {
     expect(within(gallery).queryByText(structuralPlaceholder)).not.toBeInTheDocument();
 
     const finale = screen.getByTestId('finale-scene');
+    expect(finale).toHaveAttribute('data-content-status', 'provisional');
     expect(within(finale).getByRole('heading', { level: 2, name: 'MÉDICA DEMO' })).toBeVisible();
     expect(
       within(finale).getByRole('heading', { level: 2, name: '¡Felicitaciones Médica!' })
     ).toBeVisible();
-    const returnLink = within(finale).getByRole('link', { name: 'Volver al inicio' });
+    const returnLink = within(finale).getByRole('link', { name: 'Volver al comienzo' });
     expect(returnLink).toHaveAttribute('href', '#inicio');
     expect(screen.queryAllByText(structuralPlaceholder)).toHaveLength(placeholderSections.length);
     for (const section of placeholderSections) {
