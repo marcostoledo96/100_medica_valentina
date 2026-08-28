@@ -52,6 +52,7 @@ export function safeValidateExperienceContent(data: unknown = rawExperienceConte
 
 export const experienceContent: ExperienceContent = validateExperienceContent(rawExperienceContent);
 
+export { bootContent, rawBootContent } from './boot';
 export { profileContent } from './profile';
 export { timelineContent } from './timeline';
 export { statsContent } from './stats';
