@@ -17,7 +17,11 @@ export default function App() {
         section.id === 'inicio' ? (
           <BootExperience />
         ) : section.id === 'expediente' ? (
-          <ExpedienteScene profile={profileContent} copy={expedienteContent} nextHref="#linea-tiempo" />
+          <ExpedienteScene
+            profile={profileContent}
+            copy={expedienteContent}
+            nextHref="#linea-tiempo"
+          />
         ) : section.id === 'linea-tiempo' ? (
           <Timeline entries={timelineContent} heading={section.label} />
         ) : section.id === 'galeria' ? (

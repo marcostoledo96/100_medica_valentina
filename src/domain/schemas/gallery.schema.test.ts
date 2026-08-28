@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { GalleryCollectionSchema, GalleryItemSchema } from './gallery.schema';
+import { galleryContent } from '../../content/gallery';
+import {
+  GalleryCollectionSchema,
+  GalleryContentSchema,
+  GalleryCopySchema,
+  GalleryItemSchema,
+} from './gallery.schema';
 
 describe('Gallery Schemas', () => {
   const validGalleryItem = {
@@ -11,6 +17,23 @@ describe('Gallery Schemas', () => {
     caption: 'Epígrafe de la imagen',
     alt: 'Fotografía descriptiva de instrumental médico',
   };
+
+  const validGalleryCopy = {
+    eyebrow: 'Estudios complementarios',
+    heading: 'Galería',
+    intro: 'Una pausa visual para registrar las pequeñas pruebas de todo el recorrido.',
+    carouselLabel: 'Estudios complementarios',
+    instruction: 'Deslizá para explorar. Tocá una imagen para verla en detalle.',
+    openImage: 'Abrir imagen',
+    imageFallback: 'Imagen no disponible',
+    findingLabel: 'Hallazgo',
+    dialogEyebrow: 'Vista ampliada',
+    close: 'Cerrar galería',
+    previous: 'Imagen anterior',
+    next: 'Imagen siguiente',
+  };
+
+  const requiredCopyKeys = Object.keys(validGalleryCopy) as Array<keyof typeof validGalleryCopy>;
 
   describe('GalleryItemSchema', () => {
     it('accepts a complete valid gallery item', () => {
@@ -74,6 +97,57 @@ describe('Gallery Schemas', () => {
       expect(() => GalleryCollectionSchema.parse(duplicate)).toThrow(
         /Duplicate gallery item IDs are not allowed/
       );
+    });
+
+    describe('GalleryCopySchema and GalleryContentSchema', () => {
+      it('accepts valid copy and a collection in the composite contract', () => {
+        const result = GalleryContentSchema.parse({
+          copy: validGalleryCopy,
+          items: [validGalleryItem],
+        });
+
+        expect(result.copy).toEqual(validGalleryCopy);
+        expect(result.items).toEqual([validGalleryItem]);
+        expect(GalleryCopySchema.parse(validGalleryCopy)).toEqual(validGalleryCopy);
+      });
+
+      it.each(requiredCopyKeys)('rejects missing or empty "%s" copy', (key) => {
+        const missingCopy: Record<string, unknown> = { ...validGalleryCopy };
+        delete missingCopy[key];
+
+        expect(() =>
+          GalleryContentSchema.parse({ copy: missingCopy, items: [validGalleryItem] })
+        ).toThrow();
+        expect(() =>
+          GalleryContentSchema.parse({
+            copy: { ...validGalleryCopy, [key]: '   ' },
+            items: [validGalleryItem],
+          })
+        ).toThrow();
+      });
+
+      it('keeps item validation delegated to GalleryCollectionSchema', () => {
+        expect(() => GalleryContentSchema.parse({ copy: validGalleryCopy, items: [] })).toThrow(
+          /at least one item/
+        );
+
+        expect(() =>
+          GalleryContentSchema.parse({
+            copy: validGalleryCopy,
+            items: [validGalleryItem, validGalleryItem],
+          })
+        ).toThrow(/Duplicate gallery item IDs are not allowed/);
+      });
+
+      it('keeps the default fixture explicitly marked as demo content', () => {
+        expect(galleryContent.items.length).toBeGreaterThan(0);
+        expect(galleryContent.items.every((item) => item.id.startsWith('demo-gallery-'))).toBe(
+          true
+        );
+        expect(galleryContent.items.every((item) => item.image.startsWith('/images/demo/'))).toBe(
+          true
+        );
+      });
     });
   });
 });
