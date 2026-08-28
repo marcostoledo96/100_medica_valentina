@@ -3,6 +3,7 @@ import { StructuralScenePlaceholder } from './components/showcase/StructuralScen
 import { timelineContent } from './content/timeline';
 import { narrativeSections } from './content/sections';
 import { BootExperience } from './features/boot';
+import { Gallery } from './features/gallery';
 import { Timeline } from './features/timeline';
 
 export default function App() {
@@ -14,6 +15,8 @@ export default function App() {
           <BootExperience />
         ) : section.id === 'linea-tiempo' ? (
           <Timeline entries={timelineContent} heading={section.label} />
+        ) : section.id === 'galeria' ? (
+          <Gallery />
         ) : (
           <StructuralScenePlaceholder section={section} />
         )

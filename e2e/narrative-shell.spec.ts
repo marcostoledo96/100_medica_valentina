@@ -74,7 +74,7 @@ test.describe('Narrative Shell E2E', () => {
     const links = page
       .getByRole('navigation', { name: 'Progreso del recorrido' })
       .getByRole('link');
-    await expect(links).toHaveCount(4);
+    await expect(links).toHaveCount(5);
 
     for (let index = 0; index < (await links.count()); index += 1) {
       const link = links.nth(index);
@@ -122,7 +122,11 @@ test.describe('Narrative Shell E2E', () => {
     await page.keyboard.press('Tab');
     await expect(timelineLink).toBeFocused();
     await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Final' })).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(page.getByRole('link', { name: 'Galería', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await expect(timelineLink).toBeFocused();
     await page.keyboard.press('Enter');
@@ -150,6 +154,7 @@ test.describe('Narrative Shell E2E', () => {
     await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Galería' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Final' })).toBeAttached();
     await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
       'aria-current',
