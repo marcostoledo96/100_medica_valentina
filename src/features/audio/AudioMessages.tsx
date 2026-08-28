@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { AudioMessage } from '../../domain/types';
 import './AudioMessages.css';
 
@@ -66,6 +66,33 @@ function getMessageLabel(message: AudioMessage): string {
   return message.title ? `${message.title} — ${message.author}` : message.author;
 }
 
+// Stops playback and fully releases a media element's resource: the source is
+// dropped and load() resets the element so the browser can free the fetched
+// media. Used whenever an element leaves the component.
+function releaseMediaResource(audio: HTMLMediaElement): void {
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
+}
+
+// Re-arms a failed media element for a fresh resource-selection attempt.
+// After a playback failure the browser has already run (and lost) resource
+// selection for the current src, so play() alone keeps replaying the failed
+// element state; load() re-runs selection from scratch. This runs only inside
+// the user's retry action (never before interaction), so any resource fetch
+// the browser performs is user-initiated by definition.
+function resetFailedMediaResource(audio: HTMLMediaElement, src: string): void {
+  if (!audio.paused) {
+    audio.pause();
+  }
+
+  if (audio.getAttribute('src') !== src) {
+    audio.setAttribute('src', src);
+  }
+
+  audio.load();
+}
+
 function getStatusLabel(state: AudioPlaybackState, copy: AudioMessagesCopy): string {
   switch (state) {
     case 'idle':
@@ -115,35 +142,62 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
     updatePlaybackState(pending.message.id, 'idle');
   }, [updatePlaybackState]);
 
-  // Media elements are created lazily, only after an explicit play action, so
-  // the document starts with zero <audio> nodes. Whenever one goes away its
-  // playback is stopped, its source is dropped, and no reference is retained.
-  const releaseAudioElement = useCallback((id: string) => {
-    const element = audioRefs.current.get(id);
-    if (element) {
-      element.pause();
-      element.removeAttribute('src');
+  // Single teardown path for any media element leaving the component:
+  // message removal, same-id remove/reinsert, ref replacement to null, and
+  // unmount. It first invalidates pending and active playback for the id (so
+  // stale async completions are ignored), then pauses, drops the source, and
+  // calls load() to release the resource.
+  //
+  // The cached ref callback for the id is intentionally kept: React may
+  // reattach a replacement element for the same id right after a transient
+  // null (ref swap or the dev-mode remount cycle), and dropping the cache
+  // entry here would make the next render mint a new callback whose old-ref
+  // detach would then release the live replacement element. Entries are
+  // deleted only when the id truly leaves the collection (messages effect)
+  // or at final unmount.
+  //
+  // The coherent idle reset runs last so synchronous media events dispatched
+  // by pause()/load() during the release — while this teardown is still
+  // inside the component's commit — cannot leave paused/error state behind.
+  const teardownAudioElement = useCallback(
+    (id: string) => {
+      const pending = pendingPlayRef.current;
+      if (pending !== null && pending.message.id === id) {
+        pendingPlayRef.current = null;
+        if (isMountedRef.current) {
+          setPendingPlay(null);
+        }
+      }
 
       if (activeAudioIdRef.current === id) {
         activeAudioIdRef.current = null;
         playRequestRef.current += 1;
       }
-    }
 
-    audioRefs.current.delete(id);
-    audioRefCallbacks.current.delete(id);
-  }, []);
+      const element = audioRefs.current.get(id);
+      if (element) {
+        releaseMediaResource(element);
+      }
+
+      audioRefs.current.delete(id);
+
+      if (isMountedRef.current) {
+        updatePlaybackState(id, 'idle');
+      }
+    },
+    [updatePlaybackState]
+  );
 
   const assignAudioRef = useCallback(
     (id: string, element: HTMLAudioElement | null) => {
       if (element === null) {
-        releaseAudioElement(id);
+        teardownAudioElement(id);
         return;
       }
 
       audioRefs.current.set(id, element);
     },
-    [releaseAudioElement]
+    [teardownAudioElement]
   );
 
   const getAudioRef = useCallback(
@@ -238,25 +292,31 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
   // Messages removed from props must not keep playing or retain media,
   // listener, or callback references. React detaches refs before effects, so
   // this also prunes the mounted-ids state for messages that disappeared.
+  // Callback cache entries must only be dropped for ids that truly leave the
+  // collection: the transient ref-null teardown keeps them cached so a
+  // replacement element for the same id reattaches the very same callback
+  // instead of churning identities.
   useEffect(() => {
     const activeIds = new Set(messages.map((message) => message.id));
-    const pending = pendingPlayRef.current;
-    const hasStalePending = pending !== null && !activeIds.has(pending.message.id);
 
-    for (const id of Array.from(audioRefs.current.keys())) {
-      if (!activeIds.has(id)) {
-        releaseAudioElement(id);
-      }
+    const pending = pendingPlayRef.current;
+    if (pending !== null && !activeIds.has(pending.message.id)) {
+      teardownAudioElement(pending.message.id);
+      audioRefCallbacks.current.delete(pending.message.id);
     }
 
-    if (hasStalePending) {
-      clearPendingPlayback();
+    const knownIds = new Set([...audioRefs.current.keys(), ...audioRefCallbacks.current.keys()]);
+    for (const id of knownIds) {
+      if (!activeIds.has(id)) {
+        teardownAudioElement(id);
+        audioRefCallbacks.current.delete(id);
+      }
     }
 
     // Playback state for removed ids is cleared as part of the same
     // lifecycle cleanup, so re-adding the same id cannot render or act on
-    // stale paused/error/playing state. Queued after the stale pending
-    // clear above so that clear cannot re-add an entry for a removed id.
+    // stale paused/error/playing state. Queued after the teardowns above so
+    // that a teardown cannot re-add an entry for a removed id.
     setPlaybackStates((currentStates) => {
       let changed = false;
       const nextStates: Record<string, AudioPlaybackState> = {};
@@ -275,7 +335,7 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
       const nextIds = new Set([...currentIds].filter((id) => activeIds.has(id)));
       return nextIds.size === currentIds.size ? currentIds : nextIds;
     });
-  }, [messages, releaseAudioElement, clearPendingPlayback]);
+  }, [messages, teardownAudioElement]);
 
   const handlePlay = useCallback(
     (message: AudioMessage) => {
@@ -308,6 +368,16 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
         }
       }
 
+      // A failed element (rejected play() or media error) must not be replayed
+      // from its broken state: before arming the new request, re-select the
+      // resource from scratch. This runs while the state is still "error" and
+      // no request is active, so events dispatched by pause()/load() cannot
+      // corrupt the retry; the request below invalidates any stale promise from
+      // the failed attempt.
+      if (currentState === 'error' && audio) {
+        resetFailedMediaResource(audio, message.src);
+      }
+
       const requestId = ++playRequestRef.current;
       activeAudioIdRef.current = message.id;
       updatePlaybackState(message.id, 'loading');
@@ -335,6 +405,10 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
 
   const handleMediaPlay = useCallback(
     (id: string) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
       if (activeAudioIdRef.current === id) {
         updatePlaybackState(id, 'playing');
       }
@@ -363,6 +437,10 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
 
   const handleMediaEnded = useCallback(
     (id: string) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
       if (activeAudioIdRef.current === id) {
         activeAudioIdRef.current = null;
         playRequestRef.current += 1;
@@ -375,6 +453,10 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
 
   const handleMediaError = useCallback(
     (id: string) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
       if (activeAudioIdRef.current === id) {
         activeAudioIdRef.current = null;
         playRequestRef.current += 1;
@@ -385,6 +467,21 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
     [updatePlaybackState]
   );
 
+  // Unmount-intent record: must flip BEFORE any child media ref detaches so
+  // the ref-null teardown and the pause()/load() media events it dispatches
+  // synchronously observe the guard as false and skip every state update.
+  // This ordering is proven for this tree (react-dom 18.3):
+  // commitDeletionEffectsOnFiber runs a deleted function component's OWN
+  // layout-effect destroys before traversing into its children, so this
+  // cleanup runs before the <audio> ref-null teardowns; a passive useEffect
+  // cleanup cannot provide it — its destroys run after the refs detach (the
+  // suite pins this contract in 'unmount lifecycle ordering contract').
+  useLayoutEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     isMountedRef.current = true;
     const mountedAudioRefs = audioRefs.current;
@@ -394,8 +491,13 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
       isMountedRef.current = false;
       playRequestRef.current += 1;
 
-      for (const element of Array.from(mountedAudioRefs.values())) {
-        element.pause();
+      // Full resource teardown on unmount: the mounted guard inside the
+      // teardown keeps every state update off while each element pauses,
+      // drops its source, and calls load() to release the resource. Teardown
+      // keeps callback entries by design, so the cached reference callbacks
+      // must be cleared here at the final unmount.
+      for (const id of Array.from(mountedAudioRefs.keys())) {
+        teardownAudioElement(id);
       }
 
       activeAudioIdRef.current = null;
@@ -403,7 +505,7 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
       mountedAudioRefs.clear();
       mountedAudioRefCallbacks.clear();
     };
-  }, []);
+  }, [teardownAudioElement]);
 
   return (
     <div
@@ -469,7 +571,6 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
                       type="button"
                       className="audio-messages__button"
                       aria-label={`${buttonLabel}: ${messageLabel}`}
-                      aria-pressed={state === 'playing'}
                       aria-describedby={statusId}
                       aria-busy={state === 'loading'}
                       data-audio-control={message.id}
@@ -486,7 +587,7 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
                       className="audio-messages__status"
                       data-audio-status={message.id}
                       role={state === 'error' ? 'alert' : 'status'}
-                      aria-live="polite"
+                      data-testid={`audio-status-${message.id}`}
                     >
                       {getStatusLabel(state, resolvedCopy)}
                     </p>
@@ -494,6 +595,7 @@ export function AudioMessages({ messages, copy, className = '' }: AudioMessagesP
 
                   {mountedMediaIds.has(message.id) ? (
                     <audio
+                      key={message.src}
                       ref={getAudioRef(message.id)}
                       className="audio-messages__media"
                       aria-hidden="true"

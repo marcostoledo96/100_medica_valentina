@@ -8,7 +8,12 @@ const viewports = [
   { width: 1280, height: 800, label: '1280px' },
 ];
 
-type PlaybackMockMode = 'resolve' | 'reject';
+type PlaybackMockMode = 'resolve' | 'reject' | 'reject-first';
+
+type TrackedMediaElement = HTMLMediaElement & {
+  __playCount?: number;
+  __loadCount?: number;
+};
 
 /**
  * Replaces native media playback with an event-driven mock so tests exercise
@@ -19,10 +24,17 @@ type PlaybackMockMode = 'resolve' | 'reject';
 async function installPlaybackMock(page: Page, mode: PlaybackMockMode = 'resolve') {
   await page.addInitScript((playbackMode: PlaybackMockMode) => {
     HTMLMediaElement.prototype.play = function (this: HTMLMediaElement) {
+      const host = this as HTMLMediaElement & { __playCount?: number };
+      host.__playCount = (host.__playCount ?? 0) + 1;
+
       if (playbackMode === 'reject') {
         return Promise.reject(
           new DOMException('Playback blocked by media policy', 'NotAllowedError')
         );
+      }
+
+      if (playbackMode === 'reject-first' && host.__playCount === 1) {
+        return Promise.reject(new DOMException('First playback attempt failed', 'NotAllowedError'));
       }
 
       this.dispatchEvent(new Event('play'));
@@ -30,6 +42,12 @@ async function installPlaybackMock(page: Page, mode: PlaybackMockMode = 'resolve
     };
     HTMLMediaElement.prototype.pause = function (this: HTMLMediaElement) {
       this.dispatchEvent(new Event('pause'));
+    };
+    const nativeLoad = HTMLMediaElement.prototype.load;
+    HTMLMediaElement.prototype.load = function (this: HTMLMediaElement) {
+      const host = this as HTMLMediaElement & { __loadCount?: number };
+      host.__loadCount = (host.__loadCount ?? 0) + 1;
+      nativeLoad.call(this);
     };
   }, mode);
 }
@@ -102,19 +120,17 @@ test.describe('Audio messages feature E2E', () => {
 
     await expect(page.locator('audio')).toHaveCount(0);
     await expect(firstCard).toHaveAttribute('data-audio-state', 'idle');
-    await expect(firstButton).toHaveAttribute('aria-pressed', 'false');
 
     await firstButton.click();
 
     await expect(firstMedia).toHaveAttribute('src', '/audio/demo/audio-01.mp3');
     await expect(firstCard).toHaveAttribute('data-audio-state', 'playing');
-    await expect(firstButton).toHaveAttribute('aria-pressed', 'true');
     await expect(firstButton).toHaveAccessibleName(/Pausar mensaje:/);
 
     await firstButton.click();
 
     await expect(firstCard).toHaveAttribute('data-audio-state', 'paused');
-    await expect(firstButton).toHaveAttribute('aria-pressed', 'false');
+    await expect(firstButton).toHaveAccessibleName(/Reproducir mensaje:/);
   });
 
   test('arbitrates playback: playing B pauses A while both media stay resumable', async ({
@@ -140,8 +156,6 @@ test.describe('Audio messages feature E2E', () => {
 
     await expect(secondCard).toHaveAttribute('data-audio-state', 'playing');
     await expect(firstCard).toHaveAttribute('data-audio-state', 'paused');
-    await expect(firstButton).toHaveAttribute('aria-pressed', 'false');
-    await expect(secondButton).toHaveAttribute('aria-pressed', 'true');
     await expect(audioMessages.getByTestId('audio-media-demo-audio-02')).toHaveAttribute(
       'src',
       '/audio/demo/audio-02.m4a'
@@ -251,6 +265,52 @@ test.describe('Audio messages feature E2E', () => {
     );
   });
 
+  test('retries a failed message into playing after a full resource reset', async ({ page }) => {
+    await installPlaybackMock(page, 'reject-first');
+
+    const audioRequests: string[] = [];
+    await page.route(/^https?:\/\/[^/]+\/audio\//, (route) => {
+      audioRequests.push(route.request().url());
+      void route.fulfill({
+        status: 200,
+        contentType: 'audio/wav',
+        body: Buffer.from(
+          'UklGRsQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+          'base64'
+        ),
+      });
+    });
+
+    const audioMessages = await openAudioMessages(page);
+    const firstCard = audioMessages.getByTestId('audio-message-demo-audio-01');
+    const firstButton = audioMessages.getByTestId('audio-control-demo-audio-01');
+    const firstMedia = audioMessages.getByTestId('audio-media-demo-audio-01');
+
+    // Zero requests before interaction remains the invariant; the retry's own
+    // load() may refetch the resource, which is user-initiated by definition.
+    expect(audioRequests, 'no /audio request before any interaction').toHaveLength(0);
+
+    await firstButton.click();
+
+    await expect(firstCard).toHaveAttribute('data-audio-state', 'error');
+    await expect(firstButton).toHaveAccessibleName(/Reintentar mensaje:/);
+
+    await firstButton.click();
+
+    await expect(firstCard).toHaveAttribute('data-audio-state', 'playing');
+    await expect(firstButton).toHaveAccessibleName(/Pausar mensaje:/);
+    await expect(firstMedia).toHaveAttribute('src', '/audio/demo/audio-01.mp3');
+
+    const loadCount = await firstMedia.evaluate(
+      (element) => (element as TrackedMediaElement).__loadCount ?? 0
+    );
+    expect(loadCount, 'retry must reset the failed resource with load()').toBe(1);
+    expect(
+      firstMedia,
+      'retry keeps the same element instead of mounting a new one'
+    ).toHaveAttribute('src', '/audio/demo/audio-01.mp3');
+  });
+
   test('transitions to idle on ended and replays the same message', async ({ page }) => {
     await installPlaybackMock(page);
 
@@ -266,7 +326,6 @@ test.describe('Audio messages feature E2E', () => {
 
     await expect(firstCard).toHaveAttribute('data-audio-state', 'idle');
     await expect(firstButton).toHaveAccessibleName(/Reproducir mensaje:/);
-    await expect(firstButton).toHaveAttribute('aria-pressed', 'false');
 
     await firstButton.click();
 
