@@ -118,7 +118,7 @@ test.describe('Narrative Shell E2E', () => {
     ).toBe(true);
 
     await page.keyboard.press('Tab');
-    await expect(page.getByRole('link', { name: 'Expediente' })).toBeFocused();
+    await expect(page.getByRole('link', { name: 'Expediente', exact: true })).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(timelineLink).toBeFocused();
     await page.keyboard.press('Tab');
@@ -146,7 +146,7 @@ test.describe('Narrative Shell E2E', () => {
   }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { level: 2, name: 'Inicio' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Inicio' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
     await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
