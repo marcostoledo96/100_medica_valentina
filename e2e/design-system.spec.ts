@@ -1,45 +1,44 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './narrative-test';
 
-test.describe('Design System Showcase E2E', () => {
-  test('renders showcase with zero console errors and allows phase switching', async ({ page }) => {
-    const consoleErrors: string[] = [];
-    const pageErrors: string[] = [];
-
-    page.on('console', (message) => {
-      if (message.type() === 'error') {
-        consoleErrors.push(message.text());
-      }
-    });
-
-    page.on('pageerror', (error) => {
-      pageErrors.push(error.message);
-    });
-
+test.describe('Narrative Shell E2E', () => {
+  test('renders the shell, follows native anchors, and derives the active phase', async ({
+    page,
+  }) => {
     await page.goto('/');
 
     const main = page.locator('main#experience-root');
-    await expect(main).toBeVisible();
-
     const rootProvider = page.locator('[data-experience-phase]');
-    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'clinical');
+    const timelineLink = page.getByRole('link', { name: 'Línea de tiempo' });
 
-    // Switch to Human phase
-    const humanButton = page.getByRole('button', { name: 'human', exact: true });
-    await humanButton.click();
+    await expect(main).toBeVisible();
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'clinical');
+    await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+
+    await timelineLink.click();
+
+    await expect(page).toHaveURL(/#linea-tiempo$/);
     await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
+    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+  });
 
-    // Switch to Finale phase
-    const finaleButton = page.getByRole('button', { name: 'finale', exact: true });
-    await finaleButton.click();
-    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'finale');
+  test('updates the active section from IntersectionObserver visibility', async ({ page }) => {
+    await page.goto('/');
 
-    // Switch back to Clinical phase
-    const clinicalButton = page.getByRole('button', { name: 'clinical', exact: true });
-    await clinicalButton.click();
-    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'clinical');
+    const timelineSection = page.getByRole('region', { name: 'Línea de tiempo' });
+    const timelineLink = page.getByRole('link', { name: 'Línea de tiempo' });
+    const rootProvider = page.locator('[data-experience-phase]');
 
-    expect(consoleErrors).toHaveLength(0);
-    expect(pageErrors).toHaveLength(0);
+    await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    await timelineSection.scrollIntoViewIfNeeded();
+
+    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
   });
 
   test('validates no horizontal overflow across required mobile viewports (360px, 390px, 412px, 430px)', async ({
@@ -50,6 +49,7 @@ test.describe('Design System Showcase E2E', () => {
       { width: 390, height: 844, label: '390px (Standard iPhone)' },
       { width: 412, height: 915, label: '412px (Standard Android)' },
       { width: 430, height: 932, label: '430px (Large Mobile)' },
+      { width: 1280, height: 800, label: '1280px (Desktop)' },
     ];
 
     for (const vp of viewports) {
@@ -67,136 +67,130 @@ test.describe('Design System Showcase E2E', () => {
     }
   });
 
-  test('enforces minimum 44x44px touch targets on interactive buttons', async ({ page }) => {
+  test('keeps every progress link at or above the 44px touch target', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
 
-    const primaryBtn = page.getByTestId('showcase-btn-primary');
-    const secondaryBtn = page.getByTestId('showcase-btn-secondary');
-    const iconBtnCheck = page.getByTestId('showcase-icon-btn-check');
-    const iconBtnHeart = page.getByTestId('showcase-icon-btn-heart');
+    const links = page
+      .getByRole('navigation', { name: 'Progreso del recorrido' })
+      .getByRole('link');
+    await expect(links).toHaveCount(4);
 
-    const buttons = [primaryBtn, secondaryBtn, iconBtnCheck, iconBtnHeart];
-
-    for (const btn of buttons) {
-      const box = await btn.boundingBox();
+    for (let index = 0; index < (await links.count()); index += 1) {
+      const link = links.nth(index);
+      const box = await link.boundingBox();
       expect(box, 'Bounding box must be present').not.toBeNull();
       if (box) {
-        expect(box.width, `Button width ${box.width}px should be >= 44px`).toBeGreaterThanOrEqual(
+        expect(box.width, `Link width ${box.width}px should be >= 44px`).toBeGreaterThanOrEqual(44);
+        expect(box.height, `Link height ${box.height}px should be >= 44px`).toBeGreaterThanOrEqual(
           44
         );
-        expect(
-          box.height,
-          `Button height ${box.height}px should be >= 44px`
-        ).toBeGreaterThanOrEqual(44);
       }
     }
   });
 
-  test('supports keyboard navigation with visible focus indicators on Button and IconButton', async ({
+  test('activates a real anchor with keyboard focus, reverse navigation, and no positive tab indices', async ({
     page,
   }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
 
-    // Capture resting button shadow before focus
-    const primaryBtn = page.getByTestId('showcase-btn-primary');
-    const restingBoxShadow = await primaryBtn.evaluate(
-      (el) => window.getComputedStyle(el).boxShadow
-    );
+    const firstLink = page.getByRole('link', { name: 'Inicio' });
+    const timelineLink = page.getByRole('link', { name: 'Línea de tiempo' });
+    const rootProvider = page.locator('[data-experience-phase]');
 
-    // Tab through interactive elements until we reach primary button
-    let activeId = '';
-    for (let i = 0; i < 20; i++) {
-      await page.keyboard.press('Tab');
-      activeId = await page.evaluate(
-        () =>
-          document.activeElement?.getAttribute('data-testid') ||
-          document.activeElement?.textContent?.trim() ||
-          ''
+    await page.keyboard.press('Tab');
+    await expect(firstLink).toBeFocused();
+
+    const focusStyle = await firstLink.evaluate((element) => {
+      const styles = window.getComputedStyle(element);
+      return {
+        outlineStyle: styles.outlineStyle,
+        outlineWidth: styles.outlineWidth,
+        boxShadow: styles.boxShadow,
+      };
+    });
+
+    expect(
+      focusStyle.outlineStyle !== 'none' ||
+        parseFloat(focusStyle.outlineWidth) > 0 ||
+        focusStyle.boxShadow !== 'none'
+    ).toBe(true);
+
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Expediente' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(timelineLink).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Final' })).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(timelineLink).toBeFocused();
+    await page.keyboard.press('Enter');
+
+    await expect(page).toHaveURL(/#linea-tiempo$/);
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
+    await expect(timelineLink).toHaveAttribute('aria-current', 'page');
+
+    const positiveTabIndices = await page
+      .locator('[tabindex]')
+      .evaluateAll((elements) =>
+        elements
+          .map((element) => Number(element.getAttribute('tabindex')))
+          .filter((tabIndex) => tabIndex > 0)
       );
-      if (activeId === 'showcase-btn-primary') break;
-    }
-    expect(activeId).toBe('showcase-btn-primary');
-
-    // Verify computed focus indicator on focused Button (poll to accommodate 150ms CSS box-shadow transition)
-    await expect
-      .poll(async () => {
-        return primaryBtn.evaluate((el, resting) => {
-          const css = window.getComputedStyle(el);
-          const hasVisibleOutline =
-            css.outlineStyle !== 'none' &&
-            parseFloat(css.outlineWidth) > 0 &&
-            css.outlineColor !== 'rgba(0, 0, 0, 0)' &&
-            css.outlineColor !== 'transparent';
-
-          const hasVisibleRing =
-            css.boxShadow !== resting &&
-            css.boxShadow !== 'none' &&
-            css.boxShadow.length > resting.length;
-
-          return hasVisibleOutline || hasVisibleRing;
-        }, restingBoxShadow);
-      })
-      .toBe(true);
-
-    // Continue tabbing to icon button
-    const iconBtnCheck = page.getByTestId('showcase-icon-btn-check');
-    const restingIconShadow = await iconBtnCheck.evaluate(
-      (el) => window.getComputedStyle(el).boxShadow
-    );
-
-    for (let i = 0; i < 30; i++) {
-      await page.keyboard.press('Tab');
-      activeId = await page.evaluate(
-        () => document.activeElement?.getAttribute('data-testid') || ''
-      );
-      if (activeId === 'showcase-icon-btn-check') break;
-    }
-    expect(activeId).toBe('showcase-icon-btn-check');
-
-    // Verify computed focus indicator on focused IconButton (poll to accommodate CSS transition)
-    await expect
-      .poll(async () => {
-        return iconBtnCheck.evaluate((el, resting) => {
-          const css = window.getComputedStyle(el);
-          const hasVisibleOutline =
-            css.outlineStyle !== 'none' &&
-            parseFloat(css.outlineWidth) > 0 &&
-            css.outlineColor !== 'rgba(0, 0, 0, 0)' &&
-            css.outlineColor !== 'transparent';
-
-          const hasVisibleRing =
-            css.boxShadow !== resting &&
-            css.boxShadow !== 'none' &&
-            css.boxShadow.length > resting.length;
-
-          return hasVisibleOutline || hasVisibleRing;
-        }, restingIconShadow);
-      })
-      .toBe(true);
+    expect(positiveTabIndices).toEqual([]);
   });
 
-  test('renders VisuallyHidden content with accessible sr-only class', async ({ page }) => {
+  test('exposes labelled sections and active navigation without relying on color alone', async ({
+    page,
+  }) => {
     await page.goto('/');
 
-    const srContent = page.getByText(
-      'Screen-reader audit verified: VisuallyHidden text correctly parsed.'
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Experiencia narrativa' })
+    ).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Inicio' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Expediente' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Línea de tiempo' })).toBeAttached();
+    await expect(page.getByRole('region', { name: 'Final' })).toBeAttached();
+    await expect(page.getByRole('link', { name: 'Inicio' })).toHaveAttribute(
+      'aria-current',
+      'page'
     );
-    await expect(srContent).toBeAttached();
-    await expect(srContent).toHaveClass(/sr-only/);
   });
 
-  test('functions seamlessly under prefers-reduced-motion: reduce', async ({ page }) => {
+  test('loads a direct fragment and works under prefers-reduced-motion: reduce', async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/#final');
+
+    const rootProvider = page.locator('[data-experience-phase]');
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'finale');
+    await expect(page.getByRole('link', { name: 'Final' })).toHaveAttribute('aria-current', 'page');
+
+    const scrollBehavior = await page
+      .locator('html')
+      .evaluate((element) => window.getComputedStyle(element).scrollBehavior);
+    expect(scrollBehavior).toBe('auto');
+  });
+
+  test('supports browser history for revisiting sections', async ({ page }) => {
     await page.goto('/');
+    const rootProvider = page.locator('[data-experience-phase]');
 
-    const primaryBtn = page.getByTestId('showcase-btn-primary');
-    await expect(primaryBtn).toBeVisible();
-    await primaryBtn.click();
+    await page.getByRole('link', { name: 'Línea de tiempo' }).click();
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
 
-    // Verify button was clicked without animation hang
-    const clickCounter = page.getByText('Click counter:');
-    await expect(clickCounter).toContainText('1');
+    await page.getByRole('link', { name: 'Final' }).click();
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'finale');
+
+    await page.goBack();
+    await expect(page).toHaveURL(/#linea-tiempo$/);
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'human');
+
+    await page.goForward();
+    await expect(page).toHaveURL(/#final$/);
+    await expect(rootProvider).toHaveAttribute('data-experience-phase', 'finale');
   });
 });

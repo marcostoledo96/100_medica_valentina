@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './narrative-test';
 import * as fs from 'fs';
 
 test.describe('Visual Screenshot Capture', () => {
@@ -10,6 +10,11 @@ test.describe('Visual Screenshot Capture', () => {
   ];
 
   const phases = ['clinical', 'human', 'finale'] as const;
+  const sectionByPhase = {
+    clinical: 'inicio',
+    human: 'linea-tiempo',
+    finale: 'final',
+  } as const;
 
   for (const vp of viewports) {
     for (const phase of phases) {
@@ -21,17 +26,13 @@ test.describe('Visual Screenshot Capture', () => {
         }
 
         await page.setViewportSize({ width: vp.width, height: vp.height });
-        await page.goto('/');
+        await page.goto(`/#${sectionByPhase[phase]}`);
         await page.waitForLoadState('domcontentloaded');
 
-        const phaseBtn = page.getByRole('button', { name: phase, exact: true });
-        await phaseBtn.click();
-
-        // Deterministic wait for phase transition
         const rootProvider = page.locator('[data-experience-phase]');
         await expect(rootProvider).toHaveAttribute('data-experience-phase', phase);
 
-        const filename = `showcase-${phase}-${vp.name}.png`;
+        const filename = `narrative-shell-${phase}-${vp.name}.png`;
         const screenshotPath = testInfo.outputPath(filename);
 
         const buffer = await page.screenshot({

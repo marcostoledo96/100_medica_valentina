@@ -1,10 +1,6 @@
-import { ExperiencePhaseProvider } from './components/ui/ExperiencePhase/ExperiencePhaseProvider';
-import { DesignSystemShowcase } from './components/showcase/DesignSystemShowcase';
+import { NarrativeShell } from './components/layout/NarrativeShell';
+import { narrativeSections } from './content/sections';
 
 export default function App() {
-  return (
-    <ExperiencePhaseProvider as="div" className="min-h-screen">
-      <DesignSystemShowcase />
-    </ExperiencePhaseProvider>
-  );
+  return <NarrativeShell sections={narrativeSections} />;
 }
