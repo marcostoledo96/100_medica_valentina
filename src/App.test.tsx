@@ -16,12 +16,14 @@ describe('App Narrative Shell Integration', () => {
   it('renders configured sections through the neutral placeholder in the clinical phase', () => {
     render(<App />);
 
-    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
+    const openingHeading = screen.getByRole('heading', { level: 1, name: 'Inicio' });
+    expect(openingHeading).toHaveAttribute('id', 'inicio-heading');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(
       screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
-    ).toEqual(narrativeSections.map((section) => section.label));
+    ).toEqual(narrativeSections.slice(1).map((section) => section.label));
     expect(screen.getAllByText('Contenido estructural de demostración.')).toHaveLength(
-      narrativeSections.length
+      narrativeSections.length - 1
     );
     expect(screen.getAllByRole('region').map((region) => region.id)).toEqual(
       narrativeSections.map((section) => section.id)
