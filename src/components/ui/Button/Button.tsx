@@ -21,7 +21,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost:
     'bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-subtle active:bg-surface-raised border border-transparent',
   danger:
-    'bg-status-danger text-white hover:opacity-90 active:opacity-100 border border-transparent shadow-subtle',
+    'bg-status-danger text-status-danger-fg hover:opacity-90 active:opacity-100 border border-transparent shadow-subtle',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -54,7 +54,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isButtonDisabled}
         aria-busy={isLoading || undefined}
         aria-disabled={isButtonDisabled || undefined}
-        className={`inline-flex items-center justify-center font-ui select-none cursor-pointer text-center no-underline transition-[transform,background-color,border-color,color,box-shadow] duration-fast ease-clinical focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 ${
+        className={`inline-flex items-center justify-center font-ui select-none cursor-pointer text-center no-underline transition-[transform,background-color,border-color,color,box-shadow] duration-fast ease-clinical focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 ${
           variantStyles[variant]
         } ${sizeStyles[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
         {...props}

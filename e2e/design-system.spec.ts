@@ -93,28 +93,88 @@ test.describe('Design System Showcase E2E', () => {
     }
   });
 
-  test('supports keyboard navigation with visible focus indicators', async ({ page }) => {
+  test('supports keyboard navigation with visible focus indicators on Button and IconButton', async ({
+    page,
+  }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
-    // Press tab to navigate to the first interactive element
-    await page.keyboard.press('Tab');
+    // Capture resting button shadow before focus
+    const primaryBtn = page.getByTestId('showcase-btn-primary');
+    const restingBoxShadow = await primaryBtn.evaluate(
+      (el) => window.getComputedStyle(el).boxShadow
+    );
 
-    const activeElementTag = await page.evaluate(() => document.activeElement?.tagName);
-    expect(activeElementTag).toBe('BUTTON');
-
-    // Verify focus visible class or outline
-    const isFocusVisible = await page.evaluate(() => {
-      const el = document.activeElement;
-      if (!el) return false;
-      const styles = window.getComputedStyle(el);
-      return (
-        styles.outlineStyle !== 'none' ||
-        styles.boxShadow.length > 0 ||
-        el.classList.contains('focus-visible:outline-none')
+    // Tab through interactive elements until we reach primary button
+    let activeId = '';
+    for (let i = 0; i < 20; i++) {
+      await page.keyboard.press('Tab');
+      activeId = await page.evaluate(
+        () =>
+          document.activeElement?.getAttribute('data-testid') ||
+          document.activeElement?.textContent?.trim() ||
+          ''
       );
-    });
+      if (activeId === 'showcase-btn-primary') break;
+    }
+    expect(activeId).toBe('showcase-btn-primary');
 
-    expect(isFocusVisible).toBe(true);
+    // Verify computed focus indicator on focused Button (poll to accommodate 150ms CSS box-shadow transition)
+    await expect
+      .poll(async () => {
+        return primaryBtn.evaluate((el, resting) => {
+          const css = window.getComputedStyle(el);
+          const hasVisibleOutline =
+            css.outlineStyle !== 'none' &&
+            parseFloat(css.outlineWidth) > 0 &&
+            css.outlineColor !== 'rgba(0, 0, 0, 0)' &&
+            css.outlineColor !== 'transparent';
+
+          const hasVisibleRing =
+            css.boxShadow !== resting &&
+            css.boxShadow !== 'none' &&
+            css.boxShadow.length > resting.length;
+
+          return hasVisibleOutline || hasVisibleRing;
+        }, restingBoxShadow);
+      })
+      .toBe(true);
+
+    // Continue tabbing to icon button
+    const iconBtnCheck = page.getByTestId('showcase-icon-btn-check');
+    const restingIconShadow = await iconBtnCheck.evaluate(
+      (el) => window.getComputedStyle(el).boxShadow
+    );
+
+    for (let i = 0; i < 30; i++) {
+      await page.keyboard.press('Tab');
+      activeId = await page.evaluate(
+        () => document.activeElement?.getAttribute('data-testid') || ''
+      );
+      if (activeId === 'showcase-icon-btn-check') break;
+    }
+    expect(activeId).toBe('showcase-icon-btn-check');
+
+    // Verify computed focus indicator on focused IconButton (poll to accommodate CSS transition)
+    await expect
+      .poll(async () => {
+        return iconBtnCheck.evaluate((el, resting) => {
+          const css = window.getComputedStyle(el);
+          const hasVisibleOutline =
+            css.outlineStyle !== 'none' &&
+            parseFloat(css.outlineWidth) > 0 &&
+            css.outlineColor !== 'rgba(0, 0, 0, 0)' &&
+            css.outlineColor !== 'transparent';
+
+          const hasVisibleRing =
+            css.boxShadow !== resting &&
+            css.boxShadow !== 'none' &&
+            css.boxShadow.length > resting.length;
+
+          return hasVisibleOutline || hasVisibleRing;
+        }, restingIconShadow);
+      })
+      .toBe(true);
   });
 
   test('renders VisuallyHidden content with accessible sr-only class', async ({ page }) => {

@@ -65,4 +65,18 @@ describe('IconButton Primitive', () => {
     render(<IconButton ref={ref} label="Ref icon" icon={dummyIcon} />);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
+
+  describe('Accessible Label Validation Invariant', () => {
+    it.each([
+      ['empty string', ''],
+      ['whitespace spaces', '   '],
+      ['tabs and newlines', '\t\n '],
+    ])('throws an error when label is %s', (_, invalidLabel) => {
+      const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      expect(() => render(<IconButton label={invalidLabel} icon={dummyIcon} />)).toThrow(
+        'IconButton requires a non-empty accessible label'
+      );
+      spy.mockRestore();
+    });
+  });
 });

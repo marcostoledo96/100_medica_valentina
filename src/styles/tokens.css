@@ -1,6 +1,7 @@
 /**
  * Semantic Experience Design Tokens for %100 médica
  * Supports dynamic progression: Clinical -> Human -> Finale
+ * All color pairs verified for strict WCAG 2.2 AA (>= 4.5:1 for normal text).
  */
 
 :root,
@@ -12,10 +13,10 @@
   --surface-subtle: #0e151f;
   --surface-sunken: #05080c;
 
-  /* Text Tokens */
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
   --text-primary: #f0f6fc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #7d91aa;
   --text-inverse: #090d12;
 
   /* Border Tokens */
@@ -28,16 +29,20 @@
   --accent-primary: #10b981;
   --accent-primary-hover: #059669;
   --accent-primary-active: #047857;
-  --accent-primary-fg: #041f14;
+  --accent-primary-fg: #031f13;
   --accent-secondary: #06b6d4;
-  --accent-secondary-fg: #04232c;
+  --accent-secondary-fg: #02222b;
   --accent-muted: rgba(16, 185, 129, 0.12);
 
-  /* Status Tokens */
+  /* Status Tokens & Semantic Foregrounds */
   --status-success: #10b981;
+  --status-success-fg: #031f13;
   --status-warning: #f59e0b;
-  --status-danger: #f43f5e;
+  --status-warning-fg: #1b0e01;
+  --status-danger: #e11d48;
+  --status-danger-fg: #ffffff;
   --status-info: #06b6d4;
+  --status-info-fg: #02222b;
 
   /* Focus Ring */
   --ring-focus: #10b981;
@@ -63,10 +68,10 @@
   --surface-subtle: #f0e8dc;
   --surface-sunken: #e5dbc9;
 
-  /* Text Tokens */
-  --text-primary: #292524;
-  --text-secondary: #57534e;
-  --text-muted: #78716c;
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
+  --text-primary: #201b17;
+  --text-secondary: #4d453e;
+  --text-muted: #5c544c;
   --text-inverse: #faf7f2;
 
   /* Border Tokens */
@@ -76,22 +81,26 @@
   --border-accent: rgba(184, 93, 56, 0.45);
 
   /* Accent Tokens */
-  --accent-primary: #b85d38;
-  --accent-primary-hover: #a14e2c;
-  --accent-primary-active: #8c4021;
+  --accent-primary: #ad4e29;
+  --accent-primary-hover: #96401e;
+  --accent-primary-active: #803417;
   --accent-primary-fg: #ffffff;
-  --accent-secondary: #d97706;
+  --accent-secondary: #b45309;
   --accent-secondary-fg: #ffffff;
   --accent-muted: rgba(184, 93, 56, 0.12);
 
-  /* Status Tokens */
-  --status-success: #2d6a4f;
-  --status-warning: #d97706;
+  /* Status Tokens & Semantic Foregrounds */
+  --status-success: #1e6b47;
+  --status-success-fg: #ffffff;
+  --status-warning: #a14e0b;
+  --status-warning-fg: #ffffff;
   --status-danger: #b91c1c;
-  --status-info: #2563eb;
+  --status-danger-fg: #ffffff;
+  --status-info: #1d4ed8;
+  --status-info-fg: #ffffff;
 
   /* Focus Ring */
-  --ring-focus: #b85d38;
+  --ring-focus: #ad4e29;
   --ring-offset: #faf7f2;
 
   /* Shadows */
@@ -114,10 +123,10 @@
   --surface-subtle: #0f0f13;
   --surface-sunken: #040405;
 
-  /* Text Tokens */
+  /* Text Tokens - WCAG AA >= 4.5:1 against all surfaces */
   --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-secondary: #a8a8b3;
+  --text-muted: #888894;
   --text-inverse: #09090b;
 
   /* Border Tokens */
@@ -135,11 +144,15 @@
   --accent-secondary-fg: #180e02;
   --accent-muted: rgba(245, 158, 11, 0.15);
 
-  /* Status Tokens */
+  /* Status Tokens & Semantic Foregrounds */
   --status-success: #10b981;
+  --status-success-fg: #031f13;
   --status-warning: #f59e0b;
-  --status-danger: #f43f5e;
+  --status-warning-fg: #180e02;
+  --status-danger: #e11d48;
+  --status-danger-fg: #ffffff;
   --status-info: #38bdf8;
+  --status-info-fg: #032030;
 
   /* Focus Ring */
   --ring-focus: #f59e0b;

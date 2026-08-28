@@ -34,13 +34,21 @@ export default {
         },
         status: {
           success: 'var(--status-success)',
+          'success-fg': 'var(--status-success-fg)',
           warning: 'var(--status-warning)',
+          'warning-fg': 'var(--status-warning-fg)',
           danger: 'var(--status-danger)',
+          'danger-fg': 'var(--status-danger-fg)',
           info: 'var(--status-info)',
+          'info-fg': 'var(--status-info-fg)',
         },
-        ring: {
-          focus: 'var(--ring-focus)',
-        },
+      },
+      ringColor: {
+        focus: 'var(--ring-focus)',
+      },
+      ringOffsetColor: {
+        'surface-base': 'var(--surface-base)',
+        'surface-raised': 'var(--surface-raised)',
       },
       boxShadow: {
         subtle: 'var(--shadow-subtle)',

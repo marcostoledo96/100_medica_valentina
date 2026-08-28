@@ -1,20 +1,7 @@
-import { test } from '@playwright/test';
-import * as path from 'path';
+import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 
-const outputDir =
-  process.env.SCREENSHOT_DIR ||
-  '/home/marcos/.gemini/antigravity/brain/bf6e8f59-58be-48c3-a209-7b14030611b2/scratch/screenshots';
-
 test.describe('Visual Screenshot Capture', () => {
-  test.beforeAll(() => {
-    try {
-      fs.mkdirSync(outputDir, { recursive: true });
-    } catch {
-      // Ignore if directory creation is restricted in sandbox
-    }
-  });
-
   const viewports = [
     { name: '360px', width: 360, height: 740 },
     { name: '390px', width: 390, height: 844 },
@@ -26,21 +13,43 @@ test.describe('Visual Screenshot Capture', () => {
 
   for (const vp of viewports) {
     for (const phase of phases) {
-      test(`captures screenshot ${phase} @ ${vp.name}`, async ({ page }) => {
+      test(`captures screenshot ${phase} @ ${vp.name}`, async ({ page }, testInfo) => {
+        // Execute screenshot matrix only on mobile-chromium project runner to avoid duplicate captures
+        if (testInfo.project.name === 'desktop-chromium') {
+          test.skip();
+          return;
+        }
+
         await page.setViewportSize({ width: vp.width, height: vp.height });
         await page.goto('/');
         await page.waitForLoadState('domcontentloaded');
 
         const phaseBtn = page.getByRole('button', { name: phase, exact: true });
         await phaseBtn.click();
-        await page.waitForTimeout(150);
 
-        try {
-          const filePath = path.join(outputDir, `showcase-${phase}-${vp.name}.png`);
-          await page.screenshot({ path: filePath, fullPage: true });
-        } catch {
-          // Graceful fallback if screenshot path unwritable
-        }
+        // Deterministic wait for phase transition
+        const rootProvider = page.locator('[data-experience-phase]');
+        await expect(rootProvider).toHaveAttribute('data-experience-phase', phase);
+
+        const filename = `showcase-${phase}-${vp.name}.png`;
+        const screenshotPath = testInfo.outputPath(filename);
+
+        const buffer = await page.screenshot({
+          path: screenshotPath,
+          fullPage: true,
+        });
+
+        // Fail if screenshot was not written or empty
+        expect(buffer.byteLength, 'Screenshot buffer must not be empty').toBeGreaterThan(1000);
+        expect(
+          fs.existsSync(screenshotPath),
+          `Screenshot file ${screenshotPath} must exist on disk`
+        ).toBe(true);
+
+        await testInfo.attach(filename, {
+          body: buffer,
+          contentType: 'image/png',
+        });
       });
     }
   }

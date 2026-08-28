@@ -84,7 +84,7 @@ export const DesignSystemShowcase: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-surface-base text-text-primary transition-colors duration-normal safe-area-inset">
       {/* Top Header / Phase Controller */}
-      <header className="sticky top-0 z-30 w-full bg-surface-raised/90 backdrop-blur-md border-b border-border-default px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-30 w-full bg-surface-raised border-b border-border-default px-4 py-3 sm:px-6">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent-primary animate-pulse" />
@@ -107,7 +107,7 @@ export const DesignSystemShowcase: React.FC = () => {
                   type="button"
                   onClick={() => setPhase(p)}
                   aria-pressed={isActive}
-                  className={`px-3 py-1.5 min-h-[44px] text-xs font-mono font-medium rounded capitalize transition-all duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus ${
+                  className={`px-3 py-1.5 min-h-[44px] text-xs font-mono font-medium rounded capitalize transition-all duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus ${
                     isActive
                       ? 'bg-accent-primary text-accent-primary-fg shadow-subtle font-semibold'
                       : 'text-text-secondary hover:text-text-primary hover:bg-surface-subtle'
@@ -163,7 +163,7 @@ export const DesignSystemShowcase: React.FC = () => {
               </Card>
 
               <Card variant="raised" padding="sm" className="space-y-2">
-                <div className="h-10 w-full rounded bg-status-success flex items-center justify-center text-xs font-mono text-white font-semibold">
+                <div className="h-10 w-full rounded bg-status-success flex items-center justify-center text-xs font-mono text-status-success-fg font-semibold">
                   Success
                 </div>
                 <p className="text-xs font-ui font-medium text-text-secondary">Status Success</p>
@@ -344,7 +344,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     icon={<CheckIcon />}
                     data-testid="showcase-icon-btn-check"
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Primary</span>
+                  <span className="text-xs font-mono text-text-muted">Primary</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -354,7 +354,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     icon={<HeartIcon />}
                     data-testid="showcase-icon-btn-heart"
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Secondary</span>
+                  <span className="text-xs font-mono text-text-muted">Secondary</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -364,7 +364,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     icon={<SearchIcon />}
                     data-testid="showcase-icon-btn-search"
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Outline</span>
+                  <span className="text-xs font-mono text-text-muted">Outline</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -374,7 +374,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     icon={<SparklesIcon />}
                     data-testid="showcase-icon-btn-sparkles"
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Ghost</span>
+                  <span className="text-xs font-mono text-text-muted">Ghost</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -384,7 +384,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     disabled
                     icon={<SearchIcon />}
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Disabled</span>
+                  <span className="text-xs font-mono text-text-muted">Disabled</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
@@ -394,7 +394,7 @@ export const DesignSystemShowcase: React.FC = () => {
                     isLoading
                     icon={<CheckIcon />}
                   />
-                  <span className="text-[10px] font-mono text-text-muted">Loading</span>
+                  <span className="text-xs font-mono text-text-muted">Loading</span>
                 </div>
               </div>
             </Card>

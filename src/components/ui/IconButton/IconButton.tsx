@@ -49,6 +49,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     },
     ref
   ) => {
+    if (!label || label.trim().length === 0) {
+      throw new Error('IconButton requires a non-empty accessible label');
+    }
+
     const isButtonDisabled = disabled || isLoading;
 
     return (
@@ -60,7 +64,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         disabled={isButtonDisabled}
         aria-busy={isLoading || undefined}
         aria-disabled={isButtonDisabled || undefined}
-        className={`inline-flex items-center justify-center select-none cursor-pointer shrink-0 transition-[transform,background-color,border-color,color,box-shadow] duration-fast ease-clinical focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base active:scale-[0.96] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 ${
+        className={`inline-flex items-center justify-center select-none cursor-pointer shrink-0 transition-[transform,background-color,border-color,color,box-shadow] duration-fast ease-clinical focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base active:scale-[0.96] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 ${
           variantStyles[variant]
         } ${sizeStyles[size]} ${className}`}
         {...props}
